@@ -1,0 +1,13 @@
+*.pyc
+*~
+__pycache__
+myvenv
+venv
+db.sqlite3
+/static
+.DS_Store
+settings.py
+settings-DESENV.py
+apibadminton.json
+apibadminton.log
+*.log

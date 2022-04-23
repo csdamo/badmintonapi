@@ -157,7 +157,6 @@ def get_golpes():
     return jsonify({'golpes_badminton' : output_golpe})
 
 
-
 LOGFILE = 'apibadminton.log'   #Log-File-Name
 LOGFILESIZE = 5000000    #Log-File-Size (bytes)
 LOGFILECOUNT = 4 #Rotate-Count-File

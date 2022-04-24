@@ -6,55 +6,52 @@
 	},
 	"item": [
 		{
-			"name": "/v1/golpes",
+			"name": "/get_golpes",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/v1/get_golpes",
+					"raw": "{{url}}/get_golpes",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"v1",
 						"get_golpes"
 					]
 				},
-				"description": "**/v1/golpes**\n\nEntrada:\n\n*   Não requer parâmetro de entrada\n    \n\nSaída:\n\n*   Lista de \"golpes\":\n    \n\n``` json\n{\n    \"golpes_badminton\": [\n        {\n            \"golpe_descricao\": \"Saque\",\n            \"golpe_id\": 1\n        },\n        {\n            \"golpe_descricao\": \"Forehand\",\n            \"golpe_id\": 2\n        },\n        {\n            \"golpe_descricao\": \"Backhand\",\n            \"golpe_id\": 3\n        },\n        {\n            \"golpe_descricao\": \"Clear\",\n            \"golpe_id\": 4\n        },\n        {\n            \"golpe_descricao\": \"Drop\",\n            \"golpe_id\": 5\n        },\n        {\n            \"golpe_descricao\": \"Smash\",\n            \"golpe_id\": 6\n        },\n        {\n            \"golpe_descricao\": \"Drive\",\n            \"golpe_id\": 7\n        },\n        {\n            \"golpe_descricao\": \"Lob\",\n            \"golpe_id\": 8\n        },\n        {\n            \"golpe_descricao\": \"Net-Shot\",\n            \"golpe_id\": 9\n        },\n        {\n            \"golpe_descricao\": \"Net-Kill\",\n            \"golpe_id\": 10\n        },\n        {\n            \"golpe_descricao\": \"Net-Lift\",\n            \"golpe_id\": 11\n        }\n    ]\n}\n\n```"
+				"description": "**/get_golpes**\n\nEntrada:\n\n*   Não requer parâmetro de entrada\n    \n\nSaída:\n\n*   Lista de \"golpes\":\n    \n\n``` json\n{\n    \"golpes_badminton\": [\n        {\n            \"golpe_descricao\": \"Saque\",\n            \"golpe_id\": 1\n        },\n        {\n            \"golpe_descricao\": \"Forehand\",\n            \"golpe_id\": 2\n        },\n        {\n            \"golpe_descricao\": \"Backhand\",\n            \"golpe_id\": 3\n        },\n        {\n            \"golpe_descricao\": \"Clear\",\n            \"golpe_id\": 4\n        },\n        {\n            \"golpe_descricao\": \"Drop\",\n            \"golpe_id\": 5\n        },\n        {\n            \"golpe_descricao\": \"Smash\",\n            \"golpe_id\": 6\n        },\n        {\n            \"golpe_descricao\": \"Drive\",\n            \"golpe_id\": 7\n        },\n        {\n            \"golpe_descricao\": \"Lob\",\n            \"golpe_id\": 8\n        },\n        {\n            \"golpe_descricao\": \"Net-Shot\",\n            \"golpe_id\": 9\n        },\n        {\n            \"golpe_descricao\": \"Net-Kill\",\n            \"golpe_id\": 10\n        },\n        {\n            \"golpe_descricao\": \"Net-Lift\",\n            \"golpe_id\": 11\n        }\n    ]\n}\n\n```"
 			},
 			"response": []
 		},
 		{
-			"name": "/v1/get_jogadores",
+			"name": "/get_jogadores",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/v1/get_jogadores",
+					"raw": "{{url}}/get_jogadores",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"v1",
 						"get_jogadores"
 					]
 				},
-				"description": "**/v1/jogadores**\n\nEntrada:\n\n*   Não requer parâmetro de entrada\n    \n\nSaída:\n\n*   Lista de \"jogadores\":\n    \n\n``` json\n{\n    \"jogadores_badminton\": [\n        {\n            \"jogador_data_nascimento\": \"11 August 1987\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 2,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Greysia Polii\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"27 July 1988\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 3,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Fabiana da Silva\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"15 June 1993\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 4,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Carolina María Marín Martín\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"07 November 1971\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 5,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Marco Paulo Pereira Vasconcelos\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"24 November 1996\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 6,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Ygor Coelho de Oliveira\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"02 May 1996\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 7,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Lohaynny Caroline de Oliveira Vicente\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"11 February 1971\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 8,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Lucia Francisca Susi Susanti \",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"29 April 1998\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 9,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Apriyani Rahayu\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"08 June 2000\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 10,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Sâmia Raquel Passos Lima\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"30 January 1994\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 11,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Luana Vicente\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"23 April 2001\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 12,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Jaqueline Maria Lopes Lima\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"05 June 1995\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"C:/Users/crist/Diretorios_teste/badmintonbd/media/jogador/PusarlaVenkataSindhu.jpg\",\n            \"jogador_id\": 13,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Pusarla Venkata Sindhu\",\n            \"jogador_telefone\": null\n        }\n    ]\n}\n\n```"
+				"description": "**/get_ogadores**\n\nEntrada:\n\n*   Não requer parâmetro de entrada\n    \n\nSaída:\n\n*   Lista de \"jogadores\":\n    \n\n``` json\n{\n    \"jogadores_badminton\": [\n        {\n            \"jogador_data_nascimento\": \"11 August 1987\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 2,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Greysia Polii\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"27 July 1988\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 3,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Fabiana da Silva\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"15 June 1993\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 4,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Carolina María Marín Martín\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"07 November 1971\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 5,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Marco Paulo Pereira Vasconcelos\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"24 November 1996\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 6,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Ygor Coelho de Oliveira\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"02 May 1996\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 7,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Lohaynny Caroline de Oliveira Vicente\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"11 February 1971\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 8,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Lucia Francisca Susi Susanti \",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"29 April 1998\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 9,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Apriyani Rahayu\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"08 June 2000\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 10,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Sâmia Raquel Passos Lima\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"30 January 1994\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 11,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Luana Vicente\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"23 April 2001\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 12,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Jaqueline Maria Lopes Lima\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"05 June 1995\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"C:/Users/crist/Diretorios_teste/badmintonbd/media/jogador/PusarlaVenkataSindhu.jpg\",\n            \"jogador_id\": 13,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Pusarla Venkata Sindhu\",\n            \"jogador_telefone\": null\n        }\n    ]\n}\n\n```"
 			},
 			"response": []
 		},
 		{
-			"name": "/v1/get_jogador",
+			"name": "/get_jogador",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/v1/get_jogador?id_jogador=13",
+					"raw": "{{url}}/get_jogador?id_jogador=13",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"v1",
 						"get_jogador"
 					],
 					"query": [
@@ -64,7 +61,62 @@
 						}
 					]
 				},
-				"description": "**/v1/jogador**\n\nEntrada:\n\n*   id_jogadr: int\n    \n\nSaída:\n\n*   Dados do jogador:\n    \n\n``` json\n{\n    \"jogadores_badminton\": {\n        \"jogador_data_nascimento\": \"05 June 1995\",\n        \"jogador_email\": null,\n        \"jogador_foto\": \"C:/Users/crist/Diretorios_teste/badmintonbd/media/jogador/PusarlaVenkataSindhu.jpg\",\n        \"jogador_id\": 13,\n        \"jogador_lateralidade\": \"naoinformado\",\n        \"jogador_nome\": \"Pusarla Venkata Sindhu\",\n        \"jogador_telefone\": null\n    }\n}\n\n```"
+				"description": "**/get_jogador**\n\nEntrada:\n\n*   id_jogadr: int\n    \n\nSaída:\n\n*   Dados do jogador:\n    \n\n``` json\n{\n    \"jogadores_badminton\": {\n        \"jogador_data_nascimento\": \"05 June 1995\",\n        \"jogador_email\": null,\n        \"jogador_foto\": \"C:/Users/crist/Diretorios_teste/badmintonbd/media/jogador/PusarlaVenkataSindhu.jpg\",\n        \"jogador_id\": 13,\n        \"jogador_lateralidade\": \"naoinformado\",\n        \"jogador_nome\": \"Pusarla Venkata Sindhu\",\n        \"jogador_telefone\": null\n    }\n}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/post_jogador",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\": \"Teste\",\r\n    \"data_nascimento\": \"2000-01-01\",\r\n    \"tipo_pessoa\": \"fisica\",\r\n    \"telefone\": \"\",\r\n    \"email\": \"\",\r\n    \"lateralidade\": \"naoinformado\",\r\n    \"foto\": \"PusarlaVenkataSindhu.jpg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/post_jogador",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"post_jogador"
+					]
+				},
+				"description": "**/post_jogador**\n\nEntrada:\n\n*   não requer parametro\n    \n\nSaída êxito:\n\n``` json\n{ \"mensagem\": \"post_jogador executado\" }\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/upload_file",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/crist/Diretorios_teste/badmintonbd/media/jogador/PusarlaVenkataSindhu.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/upload_file",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"upload_file"
+					]
+				},
+				"description": "**/uoload**\n\nEntrada:\n\n*   não requer parâmetros\n    \n\nSaída:\n\n*   nome do arquivo\n    \n\n``` json\n{\n    \"mensagem\": {\n        \"nome_arquivo\": \"PusarlaVenkataSindhu.jpg\"\n    }\n}\n\n```"
 			},
 			"response": []
 		}

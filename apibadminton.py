@@ -308,8 +308,6 @@ def upload_file():
         return jsonify({'mensagem' : lineout})
 
 
-
-
 @app.route('/get_golpes', methods=['GET'])
 def get_golpes():
 
@@ -342,6 +340,134 @@ def get_golpes():
     
 
     return jsonify({'golpes_badminton' : output_golpe})
+
+
+@app.route('/get_quadrantes', methods=['GET'])
+def get_quadrantes():
+
+    bloco = " select quadrante.id, quadrante.descricao_quadrante, quadrante.lado \
+                 from quadrante "
+                
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco)
+        quadrante_data = cursor.fetchall()
+
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    output_quadrante = []
+    if quadrante_data:
+        for line in quadrante_data:
+            lineout_quadrante = {}
+            lineout_quadrante['quadrante_id'] = line[0]
+            lineout_quadrante['quadrante_descricao'] = line[1]
+            lineout_quadrante['quadrante_lado'] = line[2]
+        
+            output_quadrante.append(lineout_quadrante)
+    
+
+    return jsonify({'quadrantes' : output_quadrante})
+
+
+@app.route('/post_partida', methods=['POST'])
+def post_partida():
+
+    data = request.get_json()
+
+    if not data:
+        return jsonify({'erro' : 'JSON inválido.'})
+
+    schema = {
+        "type": "object",
+        "required": ["data_partida", "tipo_jogo", "modalidade", "jogador_1", "jogador_2", "jogador_adversario_1",  "jogador_adversario_2"],
+        "properties": {
+            "data_partida": {
+                "type": "string",
+                "format": "date"
+            },
+            "tipo_jogo": {
+                "type": "string",
+                 "enum": ["simples", "dupla"]
+            },
+            "modalidade": {
+                "type": "string",
+                "enum": ["misto", "feminino", "masculino"]
+            },
+            "jogador_1": {
+                "type": "integer",
+                "minimum": 1,
+                "exclusiveMaximum": 999999999
+            },
+            "jogador_2": {
+                "type": "integer",
+            },
+            "jogador_adversario_1": {
+                "type": "integer",
+                "minimum": 1,
+                "exclusiveMaximum": 999999999
+            },
+            "jogador_adversario_2": {
+                "type": "integer",
+            }
+          }
+        }
+
+    #Verifica se Json é valido (conforme Json-schema).
+    try:
+        validate(data, schema)
+
+    except ValidationError as e:
+        mensagem = 'JSON inválido.' + ' - Path: ' + str(e.path)  + ' - Message: ' + str(e.message)
+        return jsonify({'erro' : mensagem})
+
+
+    datetimenow = datetime.datetime.now()
+
+    data_partida = data["data_partida"]
+    tipo_jogo = data["tipo_jogo"]
+    modalidade = data["modalidade"]
+    jogador_1 = data["jogador_1"]
+    jogador_2 = data["jogador_2"]
+    jogador_adversario_1 = data["jogador_adversario_1"]
+    jogador_adversario_2 = data["jogador_adversario_2"]
+
+    if tipo_jogo == 'simples':
+        jogador_2 = None
+        jogador_adversario_2 = None
+    
+    sqlvar = (data_partida, tipo_jogo, modalidade, jogador_1, jogador_2, jogador_adversario_1, jogador_adversario_2, datetimenow, datetimenow)
+
+    bloco = ("insert into partida (data_partida, tipo_jogo, modalidade, jogador_1_id, jogador_2_id, \
+                 jogador_adversario_1_id, jogador_adversario_2_id, criado_em, atualizado_em) \
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
+
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco, sqlvar)
+
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            connection.commit()
+            cursor.close()
+            connection.close()
+    
+    return jsonify({'mensagem' : "post_partida executado"})
+
 
 
 LOGFILE = 'apibadminton.log'   #Log-File-Name

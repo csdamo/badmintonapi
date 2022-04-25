@@ -24,6 +24,24 @@
 			"response": []
 		},
 		{
+			"name": "/get_quadrantes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/get_quadrantes",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"get_quadrantes"
+					]
+				},
+				"description": "**/get_quadrante**\n\nEntrada:\n\n*   Não requer parâmetro de entrada\n    \n\nSaída:\n\n*   Lista de \"quadrantes\":\n    \n\n``` json\n{\n    \"quadrantes\": [\n        {\n            \"quadrante_descricao\": \"Q 02\",\n            \"quadrante_id\": 2,\n            \"quadrante_lado\": \"esquerdo\"\n        },\n        {\n            \"quadrante_descricao\": \"Q 03\",\n            \"quadrante_id\": 3,\n            \"quadrante_lado\": \"esquerdo\"\n        },\n        {\n            \"quadrante_descricao\": \"Q 04\",\n            \"quadrante_id\": 4,\n            \"quadrante_lado\": \"direito\"\n        },\n        {\n            \"quadrante_descricao\": \"Q 05\",\n            \"quadrante_id\": 5,\n            \"quadrante_lado\": \"direito\"\n        },\n        {\n            \"quadrante_descricao\": \"Q 06\",\n            \"quadrante_id\": 6,\n            \"quadrante_lado\": \"direito\"\n        },\n        {\n            \"quadrante_descricao\": \"Q 01\",\n            \"quadrante_id\": 1,\n            \"quadrante_lado\": \"esquerdo\"\n        }\n    ]\n}\n\n```"
+			},
+			"response": []
+		},
+		{
 			"name": "/get_jogadores",
 			"request": {
 				"method": "GET",
@@ -116,7 +134,34 @@
 						"upload_file"
 					]
 				},
-				"description": "**/uoload**\n\nEntrada:\n\n*   não requer parâmetros\n    \n\nSaída:\n\n*   nome do arquivo\n    \n\n``` json\n{\n    \"mensagem\": {\n        \"nome_arquivo\": \"PusarlaVenkataSindhu.jpg\"\n    }\n}\n\n```"
+				"description": "**/upload**\n\nEntrada:\n\n*   não requer parâmetros\n    \n\nSaída:\n\n*   nome do arquivo\n    \n\n``` json\n{\n    \"mensagem\": {\n        \"nome_arquivo\": \"PusarlaVenkataSindhu.jpg\"\n    }\n}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/post_partida",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"data_partida\": \"2022-05-01\",\r\n    \"tipo_jogo\": \"simples\",\r\n    \"modalidade\": \"misto\",\r\n    \"jogador_1\": 2,\r\n    \"jogador_2\": 0,\r\n    \"jogador_adversario_1\": 6,\r\n    \"jogador_adversario_2\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/post_partida",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"post_partida"
+					]
+				},
+				"description": "**/post_partida**\n\nEntrada:\n\n*   não requer parametro\n    \n\nSaída êxito:\n\n``` json\n{\n    \"mensagem\": \"post_partida executado\"\n} \n\n```"
 			},
 			"response": []
 		}

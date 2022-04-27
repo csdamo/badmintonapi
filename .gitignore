@@ -8,6 +8,6 @@ db.sqlite3
 .DS_Store
 settings.py
 settings-DESENV.py
-apibadminton.json
 apibadminton.log
 *.log
+.idea

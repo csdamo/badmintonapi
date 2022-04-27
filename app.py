@@ -513,22 +513,22 @@ schema = {
         "DATABASE_HOST": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 50
+            "maxLength": 200
         },
         "DATABASE_NAME": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 50
+            "maxLength": 200
         },
         "DATABASE_USER": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 50
+            "maxLength": 100
         },
         "DATABASE_PASSWORD": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 50
+            "maxLength": 200
         },
         "URLMEDIA": {
             "type": "string",

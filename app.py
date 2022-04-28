@@ -27,180 +27,6 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/get_jogadores', methods=['GET'])
-def get_jogadores():
-
-    bloco = " select jogador.id, jogador.nome_jogador, jogador.data_nascimento, jogador.telefone, \
-                jogador.email, jogador.lateralidade, jogador.foto \
-                from jogador "
-                
-    try:
-        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
-        cursor = connection.cursor()
-        cursor.execute(bloco)
-        jogadores_data = cursor.fetchall()
-
-    except (Exception, psycopg2.Error) as error:
-        erro = str(error).rstrip()
-        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
-        return jsonify({'erro' : erro_banco})
-
-    finally:
-        if (connection):
-            cursor.close()
-            connection.close()
-
-    output_jogadores = []
-    if jogadores_data:
-        for line in jogadores_data:
-            lineout_jogador = {}
-            lineout_jogador['jogador_id'] = line[0]
-            lineout_jogador['jogador_nome'] = line[1]
-            lineout_jogador['jogador_data_nascimento'] = line[2].strftime('%d %B %Y')
-            lineout_jogador['jogador_telefone'] = line[3]
-            lineout_jogador['jogador_email'] = line[4]
-            lineout_jogador['jogador_lateralidade'] = line[5]
-            foto = line[6]
-            if foto:
-                lineout_jogador['jogador_foto'] = config['URLMEDIA'] + '/' + foto
-            else:
-                lineout_jogador['jogador_foto'] = ''
-
-            output_jogadores.append(lineout_jogador)
-
-    return jsonify({'jogadores_badminton' : output_jogadores})
-
-
-@app.route('/get_jogador', methods=['GET'])
-def get_jogador():
-
-    id_jogador = None
-    
-    if request.args.get('id_jogador'):
-        id_jogador = request.args.get('id_jogador')
-        
-    if not id_jogador:
-        id_jogador = '0'
-
-    if not id_jogador.isdigit():
-        return jsonify({'erro' : 'request.args[id_jogador] deve ser numerico'})
-
-
-
-    bloco = " select jogador.id, jogador.nome_jogador, jogador.data_nascimento, jogador.telefone, \
-                jogador.email, jogador.lateralidade, jogador.foto \
-                from jogador where jogador.id = %s"
-    sqlvar = (id_jogador,)
-                
-    try:
-        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
-        cursor = connection.cursor()
-        cursor.execute(bloco, sqlvar)
-        jogadore_data = cursor.fetchone()
-
-    except (Exception, psycopg2.Error) as error:
-        erro = str(error).rstrip()
-        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
-        return jsonify({'erro' : erro_banco})
-
-    finally:
-        if (connection):
-            cursor.close()
-            connection.close()
-    lineout_jogador = {}
-    if jogadore_data:
-        
-        lineout_jogador['jogador_id'] = jogadore_data[0]
-        lineout_jogador['jogador_nome'] = jogadore_data[1]
-        lineout_jogador['jogador_data_nascimento'] = jogadore_data[2].strftime('%d %B %Y')
-        lineout_jogador['jogador_telefone'] = jogadore_data[3]
-        lineout_jogador['jogador_email'] = jogadore_data[4]
-        lineout_jogador['jogador_lateralidade'] = jogadore_data[5]
-        foto = jogadore_data[6]
-        if foto:
-            lineout_jogador['jogador_foto'] = config['URLMEDIA'] + '/' + foto
-        else:
-            lineout_jogador['jogador_foto'] = ''
-
-    return jsonify({'jogadores_badminton' : lineout_jogador})
-
-
-
-    sqlfix = ("select * from contausuarioapp where email = %s")
-    sqlvar = (data['email'])
-
-    try:
-        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
-        cursor = connection.cursor()
-        cursor.execute(sqlfix, (sqlvar,))
-        conta_record = cursor.fetchone()
-        
-        if conta_record:
-            user_data = {}
-            user_data['status'] = '401'
-            user_data['mensagem'] = 'Email ja esta sendo utilizado por outra conta.'
-            return jsonify({'status' : user_data})
-
-    except (Exception, psycopg2.Error) as error:
-        erro = str(error).rstrip()
-        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
-        return jsonify({'erro' : erro_banco})
-
-    finally:
-        if (connection):
-            cursor.close()
-            connection.close()
-
-    
-    if request.args.get('id_jogador'):
-        id_jogador = request.args.get('id_jogador')
-        
-    if not id_jogador:
-        id_jogador = '0'
-
-    if not id_jogador.isdigit():
-        return jsonify({'erro' : 'request.args[id_jogador] deve ser numerico'})
-
-
-
-    bloco = " select jogador.id, jogador.nome_jogador, jogador.data_nascimento, jogador.telefone, \
-                jogador.email, jogador.lateralidade, jogador.foto \
-                from jogador where jogador.id = %s"
-    sqlvar = (id_jogador,)
-                
-    try:
-        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
-        cursor = connection.cursor()
-        cursor.execute(bloco, sqlvar)
-        jogadore_data = cursor.fetchone()
-
-    except (Exception, psycopg2.Error) as error:
-        erro = str(error).rstrip()
-        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
-        return jsonify({'erro' : erro_banco})
-
-    finally:
-        if (connection):
-            cursor.close()
-            connection.close()
-    lineout_jogador = {}
-    if jogadore_data:
-        
-        lineout_jogador['jogador_id'] = jogadore_data[0]
-        lineout_jogador['jogador_nome'] = jogadore_data[1]
-        lineout_jogador['jogador_data_nascimento'] = jogadore_data[2].strftime('%d %B %Y')
-        lineout_jogador['jogador_telefone'] = jogadore_data[3]
-        lineout_jogador['jogador_email'] = jogadore_data[4]
-        lineout_jogador['jogador_lateralidade'] = jogadore_data[5]
-        foto = jogadore_data[6]
-        if foto:
-            lineout_jogador['jogador_foto'] = config['URLMEDIA'] + '/' + foto
-        else:
-            lineout_jogador['jogador_foto'] = ''
-
-    return jsonify({'jogadores_badminton' : lineout_jogador})
-
-
 @app.route('/post_jogador', methods=['POST'])
 def post_jogador():
 
@@ -259,7 +85,7 @@ def post_jogador():
     lateralidade = data["lateralidade"]
     foto = 'jogador/' + data["foto"]
     
-    sqlvar = (nome, data_nascimento, telefone, email, lateralidade, foto, datetimenow, datetimenow)
+    tupla = (nome, data_nascimento, telefone, email, lateralidade, foto, datetimenow, datetimenow)
 
     bloco = ("insert into jogador (nome_jogador, data_nascimento, telefone, \
                 email, lateralidade, foto, criado_em, atualizado_em) \
@@ -268,7 +94,7 @@ def post_jogador():
     try:
         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
         cursor = connection.cursor()
-        cursor.execute(bloco, sqlvar)
+        cursor.execute(bloco, tupla)
 
     except (Exception, psycopg2.Error) as error:
         erro = str(error).rstrip()
@@ -284,6 +110,104 @@ def post_jogador():
     return jsonify({'mensagem' : "post_jogador executado"})
 
 
+@app.route('/get_jogador', methods=['GET'])
+def get_jogador():
+
+    id_jogador = None
+    
+    if request.args.get('id_jogador'):
+        id_jogador = request.args.get('id_jogador')
+        
+    if not id_jogador:
+        id_jogador = '0'
+
+    if not id_jogador.isdigit():
+        return jsonify({'erro' : 'request.args[id_jogador] deve ser numerico'})
+
+
+
+    bloco = " select jogador.id, jogador.nome_jogador, jogador.data_nascimento, jogador.telefone, \
+                jogador.email, jogador.lateralidade, jogador.foto \
+                from jogador where jogador.id = %s"
+    sqlvar = (id_jogador,)
+                
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco, sqlvar)
+        jogadore_data = cursor.fetchone()
+
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+    lineout_jogador = {}
+    if jogadore_data:
+        
+        lineout_jogador['jogador_id'] = jogadore_data[0]
+        lineout_jogador['jogador_nome'] = jogadore_data[1]
+        lineout_jogador['jogador_data_nascimento'] = jogadore_data[2].strftime('%d-%m-%Y')
+        lineout_jogador['jogador_telefone'] = jogadore_data[3]
+        lineout_jogador['jogador_email'] = jogadore_data[4]
+        lineout_jogador['jogador_lateralidade'] = jogadore_data[5]
+        foto = jogadore_data[6]
+        if len(foto) < 1:
+            lineout_jogador['jogador_foto'] = config['URLMEDIA'] + '/' + foto
+        else:
+            lineout_jogador['jogador_foto'] = ''
+
+    return jsonify({'jogador_badminton' : lineout_jogador})
+
+
+@app.route('/get_jogadores', methods=['GET'])
+def get_jogadores():
+
+    bloco = " select jogador.id, jogador.nome_jogador, jogador.data_nascimento, jogador.telefone, \
+                jogador.email, jogador.lateralidade, jogador.foto \
+                from jogador "
+                
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco)
+        jogadores_data = cursor.fetchall()
+
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    output_jogadores = []
+    if jogadores_data:
+        for line in jogadores_data:
+            lineout_jogador = {}
+            lineout_jogador['jogador_id'] = line[0]
+            lineout_jogador['jogador_nome'] = line[1]
+            lineout_jogador['jogador_data_nascimento'] = line[2].strftime('%d-%m-%Y')
+            lineout_jogador['jogador_telefone'] = line[3]
+            lineout_jogador['jogador_email'] = line[4]
+            lineout_jogador['jogador_lateralidade'] = line[5]
+            foto = line[6]
+            if len(foto) < 1:
+                lineout_jogador['jogador_foto'] = config['URLMEDIA'] + '/' + foto
+            else:
+                lineout_jogador['jogador_foto'] = ''
+
+            output_jogadores.append(lineout_jogador)
+
+    return jsonify({'jogadores_badminton' : output_jogadores})
+
+
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
 
@@ -297,7 +221,7 @@ def upload_file():
 
     if file:
         unique_name = str(uuid.uuid4().hex) + file.filename
-        filename = secure_filename(file.filename)
+        filename = secure_filename(unique_name)
         file.save(os.path.join(config['UPLOAD_PATH'], filename))
 
         url_file_uploaded = config['UPLOAD_URL'] + '/' + filename
@@ -388,8 +312,13 @@ def post_partida():
 
     schema = {
         "type": "object",
-        "required": ["data_partida", "tipo_jogo", "modalidade", "jogador_1", "jogador_2", "jogador_adversario_1",  "jogador_adversario_2"],
+        "required": ["nome", "data_partida", "tipo_jogo", "modalidade", "jogador_1", "jogador_2", "jogador_adversario_1",  "jogador_adversario_2"],
         "properties": {
+             "nome": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+            },
             "data_partida": {
                 "type": "string",
                 "format": "date"
@@ -431,7 +360,7 @@ def post_partida():
 
 
     datetimenow = datetime.datetime.now()
-
+    nome = data["nome"]
     data_partida = data["data_partida"]
     tipo_jogo = data["tipo_jogo"]
     modalidade = data["modalidade"]
@@ -444,11 +373,11 @@ def post_partida():
         jogador_2 = None
         jogador_adversario_2 = None
     
-    sqlvar = (data_partida, tipo_jogo, modalidade, jogador_1, jogador_2, jogador_adversario_1, jogador_adversario_2, datetimenow, datetimenow)
+    sqlvar = (nome, data_partida, tipo_jogo, modalidade, jogador_1, jogador_2, jogador_adversario_1, jogador_adversario_2, datetimenow, datetimenow)
 
-    bloco = ("insert into partida (data_partida, tipo_jogo, modalidade, jogador_1_id, jogador_2_id, \
+    bloco = ("insert into partida (nome, data_partida, tipo_jogo, modalidade, jogador_1_id, jogador_2_id, \
                  jogador_adversario_1_id, jogador_adversario_2_id, criado_em, atualizado_em) \
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
     try:
         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
@@ -469,6 +398,100 @@ def post_partida():
     return jsonify({'mensagem' : "post_partida executado"})
 
 
+@app.route('/get_partida', methods=['GET'])
+def get_partida():
+
+    id_partida = None
+    
+    if request.args.get('id_partida'):
+        id_partida = request.args.get('id_partida')
+        
+    if not id_partida:
+        id_partida = '0'
+
+    if not id_partida.isdigit():
+        return jsonify({'erro' : 'request.args[id_partida] deve ser numerico'})
+
+
+
+    bloco = " select partida.id, partida.data_partida, partida.tipo_jogo, partida.modalidade, partida.nome, \
+                partida.jogador_1_id, partida.jogador_2_id, partida.jogador_adversario_1_id, partida.jogador_adversario_2_id \
+                from partida where partida.id = %s"
+
+    sqlvar = (id_partida,)
+                
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco, sqlvar)
+        partida_data = cursor.fetchone()
+
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+    lineout_jogador = {}
+    if partida_data:
+        lineout_jogador['partida_id'] = partida_data[0]
+        lineout_jogador['partida_data'] = partida_data[1].strftime('%d-%m-%Y')
+        lineout_jogador['jogador_tipo_jogo'] = partida_data[2]
+        lineout_jogador['jogador_modalidade'] = partida_data[3]
+        lineout_jogador['partida_nome'] = partida_data[4]
+        lineout_jogador['jogador_1'] = partida_data[5]
+        lineout_jogador['jogador_2'] = partida_data[6]
+        lineout_jogador['jogador_adversario_1'] = partida_data[7]
+        lineout_jogador['jogador_adversario_2'] = partida_data[8]
+
+    return jsonify({'partida_badminton' : lineout_jogador})
+
+
+@app.route('/get_partidas', methods=['GET'])
+def get_partidas():
+
+    bloco = " select partida.id, partida.data_partida, partida.tipo_jogo, partida.modalidade, partida.nome, \
+                partida.jogador_1_id, partida.jogador_2_id, partida.jogador_adversario_1_id, partida.jogador_adversario_2_id \
+                from partida "
+                
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco)
+        partidas_data = cursor.fetchall()
+
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    output_partidas = []
+    if partidas_data:
+        for line in partidas_data:
+            lineout_partida = {}
+            lineout_partida['partida_id'] = line[0]
+            lineout_partida['partida_data'] = line[1].strftime('%d-%m-%Y')
+            lineout_partida['jogador_tipo_jogo'] = line[2]
+            lineout_partida['jogador_modalidade'] = line[3]
+            lineout_partida['partida_nome'] = line[4]
+            lineout_partida['jogador_1'] = line[5]
+            lineout_partida['jogador_2'] = line[6]
+            lineout_partida['jogador_adversario_1'] = line[7]
+            lineout_partida['jogador_adversario_2'] = line[8]
+
+            output_partidas.append(lineout_partida)
+
+    return jsonify({'partidas_badminton' : output_partidas})
+
+    
 
 LOGFILE = 'apibadminton.log'   #Log-File-Name
 LOGFILESIZE = 5000000    #Log-File-Size (bytes)

@@ -1,20 +1,20 @@
 from flask import Flask, request, jsonify, make_response, render_template
 import psycopg2
-import uuid
-from werkzeug.security import generate_password_hash, check_password_hash
-import jwt
+# import uuid
+# from werkzeug.security import generate_password_hash, check_password_hash
+# import jwt
 import datetime
-from functools import wraps
+# from functools import wraps
 from jsonschema import validate, ValidationError, SchemaError
 import json
-import logging
-import logging.handlers
+# import logging
+# import logging.handlers
 import warnings
 import locale
 import requests
 
-from flask_mail import Mail
-from flask_mail import Message
+# from flask_mail import Mail
+# from flask_mail import Message
 from threading import Thread
 
 from flask_cors import CORS
@@ -149,19 +149,19 @@ def get_jogador():
     lineout_jogador = {}
     if jogadore_data:
         
-        lineout_jogador['jogador_id'] = jogadore_data[0]
-        lineout_jogador['jogador_nome'] = jogadore_data[1]
-        lineout_jogador['jogador_data_nascimento'] = jogadore_data[2].strftime('%d-%m-%Y')
-        lineout_jogador['jogador_telefone'] = jogadore_data[3]
-        lineout_jogador['jogador_email'] = jogadore_data[4]
-        lineout_jogador['jogador_lateralidade'] = jogadore_data[5]
+        lineout_jogador['id'] = jogadore_data[0]
+        lineout_jogador['nome'] = jogadore_data[1]
+        lineout_jogador['data_nascimento'] = jogadore_data[2].strftime('%d-%m-%Y')
+        lineout_jogador['telefone'] = jogadore_data[3]
+        lineout_jogador['email'] = jogadore_data[4]
+        lineout_jogador['lateralidade'] = jogadore_data[5]
         foto = jogadore_data[6]
         if len(foto) < 1:
-            lineout_jogador['jogador_foto'] = config['URLMEDIA'] + '/' + foto
+            lineout_jogador['foto'] = config['URLMEDIA'] + '/' + foto
         else:
-            lineout_jogador['jogador_foto'] = ''
+            lineout_jogador['foto'] = ''
 
-    return jsonify({'jogador_badminton' : lineout_jogador})
+    return jsonify({'badminton' : lineout_jogador})
 
 
 @app.route('/get_jogadores', methods=['GET'])
@@ -191,17 +191,17 @@ def get_jogadores():
     if jogadores_data:
         for line in jogadores_data:
             lineout_jogador = {}
-            lineout_jogador['jogador_id'] = line[0]
-            lineout_jogador['jogador_nome'] = line[1]
-            lineout_jogador['jogador_data_nascimento'] = line[2].strftime('%d-%m-%Y')
-            lineout_jogador['jogador_telefone'] = line[3]
-            lineout_jogador['jogador_email'] = line[4]
-            lineout_jogador['jogador_lateralidade'] = line[5]
+            lineout_jogador['id'] = line[0]
+            lineout_jogador['nome'] = line[1]
+            lineout_jogador['data_nascimento'] = line[2].strftime('%d-%m-%Y')
+            lineout_jogador['telefone'] = line[3]
+            lineout_jogador['email'] = line[4]
+            lineout_jogador['lateralidade'] = line[5]
             foto = line[6]
             if len(foto) < 1:
-                lineout_jogador['jogador_foto'] = config['URLMEDIA'] + '/' + foto
+                lineout_jogador['foto'] = config['URLMEDIA'] + '/' + foto
             else:
-                lineout_jogador['jogador_foto'] = ''
+                lineout_jogador['foto'] = ''
 
             output_jogadores.append(lineout_jogador)
 
@@ -257,8 +257,8 @@ def get_golpes():
     if golpe_data:
         for line in golpe_data:
             lineout_golpe = {}
-            lineout_golpe['golpe_id'] = line[0]
-            lineout_golpe['golpe_descricao'] = line[1]
+            lineout_golpe['id'] = line[0]
+            lineout_golpe['descricao'] = line[1]
         
             output_golpe.append(lineout_golpe)
     
@@ -437,10 +437,10 @@ def get_partida():
             connection.close()
     lineout_jogador = {}
     if partida_data:
-        lineout_jogador['partida_id'] = partida_data[0]
-        lineout_jogador['partida_data'] = partida_data[1].strftime('%d-%m-%Y')
-        lineout_jogador['jogador_tipo_jogo'] = partida_data[2]
-        lineout_jogador['jogador_modalidade'] = partida_data[3]
+        lineout_jogador['id'] = partida_data[0]
+        lineout_jogador['data'] = partida_data[1].strftime('%d-%m-%Y')
+        lineout_jogador['tipo_jogo'] = partida_data[2]
+        lineout_jogador['modalidade'] = partida_data[3]
         lineout_jogador['partida_nome'] = partida_data[4]
         lineout_jogador['jogador_1'] = partida_data[5]
         lineout_jogador['jogador_2'] = partida_data[6]
@@ -477,10 +477,10 @@ def get_partidas():
     if partidas_data:
         for line in partidas_data:
             lineout_partida = {}
-            lineout_partida['partida_id'] = line[0]
-            lineout_partida['partida_data'] = line[1].strftime('%d-%m-%Y')
-            lineout_partida['jogador_tipo_jogo'] = line[2]
-            lineout_partida['jogador_modalidade'] = line[3]
+            lineout_partida['id'] = line[0]
+            lineout_partida['data'] = line[1].strftime('%d-%m-%Y')
+            lineout_partida['tipo_jogo'] = line[2]
+            lineout_partida['modalidade'] = line[3]
             lineout_partida['partida_nome'] = line[4]
             lineout_partida['jogador_1'] = line[5]
             lineout_partida['jogador_2'] = line[6]

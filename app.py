@@ -4,11 +4,11 @@ import psycopg2
 # from werkzeug.security import generate_password_hash, check_password_hash
 # import jwt
 import datetime
-# from functools import wraps
+from functools import wraps
 from jsonschema import validate, ValidationError, SchemaError
 import json
-# import logging
-# import logging.handlers
+import logging
+import logging.handlers
 import warnings
 import locale
 import requests

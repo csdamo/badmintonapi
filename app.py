@@ -292,9 +292,9 @@ def get_quadrantes():
     if quadrante_data:
         for line in quadrante_data:
             lineout_quadrante = {}
-            lineout_quadrante['quadrante_id'] = line[0]
-            lineout_quadrante['quadrante_descricao'] = line[1]
-            lineout_quadrante['quadrante_lado'] = line[2]
+            lineout_quadrante['id'] = line[0]
+            lineout_quadrante['descricao'] = line[1]
+            lineout_quadrante['lado'] = line[2]
         
             output_quadrante.append(lineout_quadrante)
     

@@ -183,20 +183,20 @@ def get_jogadores():
                 jogador.email, jogador.lateralidade, jogador.foto \
                 from jogador "
     blocof = ""
-    tuplai = ()
+    tupla = ()
+ 
 
     if lista_id_jogador != '0':
         for jogador_id in lista_id_jogador:
             if posicao == 0:
                 blocof = " where jogador.id = %s "
-                tuplaf = (jogador_id,)
+                tupla = (jogador_id,)
                 posicao += 1
             else:
                 blocof = blocof + " or jogador.id = %s "
-                tuplaf = (tuplaf) + (jogador_id,)
+                tupla = (tupla) + (jogador_id,)
     
     bloco = blocoi + blocof
-    tupla = tuplai + tuplaf
     
     try:
         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])

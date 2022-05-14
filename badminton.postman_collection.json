@@ -6,91 +6,13 @@
 	},
 	"item": [
 		{
-			"name": "/get_golpes",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{url}}/get_golpes",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"get_golpes"
-					]
-				},
-				"description": "**/get_golpes**\n\nEntrada:\n\n*   Não requer parâmetro de entrada\n    \n\nSaída:\n\n*   Lista de \"golpes\":\n    \n\n``` json\n{\n    \"golpes_badminton\": [\n        {\n            \"golpe_descricao\": \"Saque\",\n            \"golpe_id\": 1\n        },\n        {\n            \"golpe_descricao\": \"Forehand\",\n            \"golpe_id\": 2\n        },\n        {\n            \"golpe_descricao\": \"Backhand\",\n            \"golpe_id\": 3\n        },\n        {\n            \"golpe_descricao\": \"Clear\",\n            \"golpe_id\": 4\n        },\n        {\n            \"golpe_descricao\": \"Drop\",\n            \"golpe_id\": 5\n        },\n        {\n            \"golpe_descricao\": \"Smash\",\n            \"golpe_id\": 6\n        },\n        {\n            \"golpe_descricao\": \"Drive\",\n            \"golpe_id\": 7\n        },\n        {\n            \"golpe_descricao\": \"Lob\",\n            \"golpe_id\": 8\n        },\n        {\n            \"golpe_descricao\": \"Net-Shot\",\n            \"golpe_id\": 9\n        },\n        {\n            \"golpe_descricao\": \"Net-Kill\",\n            \"golpe_id\": 10\n        },\n        {\n            \"golpe_descricao\": \"Net-Lift\",\n            \"golpe_id\": 11\n        }\n    ]\n}\n\n```"
-			},
-			"response": []
-		},
-		{
-			"name": "/get_quadrantes",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{url}}/get_quadrantes",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"get_quadrantes"
-					]
-				},
-				"description": "**/get_quadrante**\n\nEntrada:\n\n*   Não requer parâmetro de entrada\n    \n\nSaída:\n\n*   Lista de \"quadrantes\":\n    \n\n``` json\n{\n    \"quadrantes\": [\n        {\n            \"quadrante_descricao\": \"Q 02\",\n            \"quadrante_id\": 2,\n            \"quadrante_lado\": \"esquerdo\"\n        },\n        {\n            \"quadrante_descricao\": \"Q 03\",\n            \"quadrante_id\": 3,\n            \"quadrante_lado\": \"esquerdo\"\n        },\n        {\n            \"quadrante_descricao\": \"Q 04\",\n            \"quadrante_id\": 4,\n            \"quadrante_lado\": \"direito\"\n        },\n        {\n            \"quadrante_descricao\": \"Q 05\",\n            \"quadrante_id\": 5,\n            \"quadrante_lado\": \"direito\"\n        },\n        {\n            \"quadrante_descricao\": \"Q 06\",\n            \"quadrante_id\": 6,\n            \"quadrante_lado\": \"direito\"\n        },\n        {\n            \"quadrante_descricao\": \"Q 01\",\n            \"quadrante_id\": 1,\n            \"quadrante_lado\": \"esquerdo\"\n        }\n    ]\n}\n\n```"
-			},
-			"response": []
-		},
-		{
-			"name": "/get_jogadores",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{url}}/get_jogadores",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"get_jogadores"
-					]
-				},
-				"description": "**/get_ogadores**\n\nEntrada:\n\n*   Não requer parâmetro de entrada\n    \n\nSaída:\n\n*   Lista de \"jogadores\":\n    \n\n``` json\n{\n    \"jogadores_badminton\": [\n        {\n            \"jogador_data_nascimento\": \"11 August 1987\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 2,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Greysia Polii\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"27 July 1988\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 3,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Fabiana da Silva\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"15 June 1993\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 4,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Carolina María Marín Martín\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"07 November 1971\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 5,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Marco Paulo Pereira Vasconcelos\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"24 November 1996\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 6,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Ygor Coelho de Oliveira\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"02 May 1996\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 7,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Lohaynny Caroline de Oliveira Vicente\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"11 February 1971\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 8,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Lucia Francisca Susi Susanti \",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"29 April 1998\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 9,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Apriyani Rahayu\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"08 June 2000\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 10,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Sâmia Raquel Passos Lima\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"30 January 1994\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 11,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Luana Vicente\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"23 April 2001\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"\",\n            \"jogador_id\": 12,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Jaqueline Maria Lopes Lima\",\n            \"jogador_telefone\": null\n        },\n        {\n            \"jogador_data_nascimento\": \"05 June 1995\",\n            \"jogador_email\": null,\n            \"jogador_foto\": \"C:/Users/crist/Diretorios_teste/badmintonbd/media/jogador/PusarlaVenkataSindhu.jpg\",\n            \"jogador_id\": 13,\n            \"jogador_lateralidade\": \"naoinformado\",\n            \"jogador_nome\": \"Pusarla Venkata Sindhu\",\n            \"jogador_telefone\": null\n        }\n    ]\n}\n\n```"
-			},
-			"response": []
-		},
-		{
-			"name": "/get_jogador",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{url}}/get_jogador?id_jogador=13",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"get_jogador"
-					],
-					"query": [
-						{
-							"key": "id_jogador",
-							"value": "13"
-						}
-					]
-				},
-				"description": "**/get_jogador**\n\nEntrada:\n\n*   id_jogadr: int\n    \n\nSaída:\n\n*   Dados do jogador:\n    \n\n``` json\n{\n    \"jogadores_badminton\": {\n        \"jogador_data_nascimento\": \"05 June 1995\",\n        \"jogador_email\": null,\n        \"jogador_foto\": \"C:/Users/crist/Diretorios_teste/badmintonbd/media/jogador/PusarlaVenkataSindhu.jpg\",\n        \"jogador_id\": 13,\n        \"jogador_lateralidade\": \"naoinformado\",\n        \"jogador_nome\": \"Pusarla Venkata Sindhu\",\n        \"jogador_telefone\": null\n    }\n}\n\n```"
-			},
-			"response": []
-		},
-		{
 			"name": "/post_jogador",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"nome\": \"Teste\",\r\n    \"data_nascimento\": \"2000-01-01\",\r\n    \"tipo_pessoa\": \"fisica\",\r\n    \"telefone\": \"\",\r\n    \"email\": \"\",\r\n    \"lateralidade\": \"naoinformado\",\r\n    \"foto\": \"PusarlaVenkataSindhu.jpg\"\r\n}",
+					"raw": "{\r\n    \"nome\": \"Carolina María Marín Martín\",\r\n    \"data_nascimento\": \"1993-06-15\",\r\n    \"telefone\": \"999655784\",\r\n    \"email\": \"carol@badminton\",\r\n    \"lateralidade\": \"naoinformado\",\r\n    \"foto\": \"\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -111,30 +33,80 @@
 			"response": []
 		},
 		{
-			"name": "/upload_file",
+			"name": "/get_jogador",
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "file",
-							"type": "file",
-							"src": "/C:/Users/crist/Diretorios_teste/badmintonbd/media/jogador/PusarlaVenkataSindhu.jpg"
-						}
-					]
-				},
 				"url": {
-					"raw": "{{url}}/upload_file",
+					"raw": "{{url}}/get_jogador?id_jogador=4",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"upload_file"
+						"get_jogador"
+					],
+					"query": [
+						{
+							"key": "id_jogador",
+							"value": "4"
+						}
 					]
 				},
-				"description": "**/upload**\n\nEntrada:\n\n*   não requer parâmetros\n    \n\nSaída:\n\n*   nome do arquivo\n    \n\n``` json\n{\n    \"mensagem\": {\n        \"nome_arquivo\": \"PusarlaVenkataSindhu.jpg\"\n    }\n}\n\n```"
+				"description": "**/get_jogador**\n\nEntrada:\n\n*   id_jogadr: int\n    \n\nSaída:\n\n*   Dados do jogador:\n    \n\n``` json\n{\n    \"badminton\": {\n        \"data_nascimento\": \"27-07-1988\",\n        \"email\": \"fabi@badminton\",\n        \"foto\": \"\",\n        \"id\": 2,\n        \"lateralidade\": \"naoinformado\",\n        \"nome\": \"Fabiana da Silva\",\n        \"telefone\": \"999655784\"\n    }\n}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/get_jogadores",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/get_jogadores",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"get_jogadores"
+					]
+				},
+				"description": "**/get_jogadores**\n\nEntrada:\n\n*   StartFragment**lista_id_jogador**: lista de id de jogador - se vazio devolve todos os jogadores\n    EndFragment  \n    \n\nSaída:\n\n*   Lista de \"jogadores\":\n    \n\n``` json\n{\n    \"jogadores_badminton\": [\n        {\n            \"data_nascimento\": \"11-08-1987\",\n            \"email\": \"greysia@badminton\",\n            \"foto\": \"\",\n            \"id\": 1,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Greysia Polii\",\n            \"telefone\": \"999655874\"\n        },\n        {\n            \"data_nascimento\": \"27-07-1988\",\n            \"email\": \"fabi@badminton\",\n            \"foto\": \"\",\n            \"id\": 2,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Fabiana da Silva\",\n            \"telefone\": \"999655784\"\n        },\n        {\n            \"data_nascimento\": \"15-06-1993\",\n            \"email\": \"carol@badminton\",\n            \"foto\": \"\",\n            \"id\": 3,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Carolina María Marín Martín\",\n            \"telefone\": \"999655784\"\n        }\n    ]\n}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/get_golpes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/get_golpes",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"get_golpes"
+					]
+				},
+				"description": "**/get_golpes**\n\nEntrada:\n\n*   Não requer parâmetro de entrada\n    \n\nSaída:\n\n*   Lista de \"golpes\":\n    \n\n``` json\n{\n    \"golpes_badminton\": [\n        {\n            \"descricao\": \"Saque\",\n            \"d\": 1\n        },\n        {\n            \"descricao\": \"Forehand\",\n            \"id\": 2\n        },\n        {\n            \"descricao\": \"Backhand\",\n            \"id\": 3\n        },\n        {\n            \"descricao\": \"Clear\",\n            \"id\": 4\n        },\n        {\n            \"descricao\": \"Drop\",\n            \"id\": 5\n        }\n    ]\n}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/get_quadrantes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/get_quadrantes",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"get_quadrantes"
+					]
+				},
+				"description": "**/get_quadrante**\n\nEntrada:\n\n*   Não requer parâmetro de entrada\n    \n\nSaída:\n\n*   Lista de \"quadrantes\":\n    \n\n``` json\n{\n    \"quadrantes\": [\n        {\n            \"descricao\": \"Q 01\",\n            \"id\": 1,\n            \"lado\": \"esquerdo\"\n        }\n    ]\n}\n\n```"
 			},
 			"response": []
 		},
@@ -145,7 +117,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"data_partida\": \"2022-05-01\",\r\n    \"tipo_jogo\": \"simples\",\r\n    \"modalidade\": \"misto\",\r\n    \"jogador_1\": 2,\r\n    \"jogador_2\": 0,\r\n    \"jogador_adversario_1\": 6,\r\n    \"jogador_adversario_2\": 0\r\n}",
+					"raw": "{\r\n    \"nome\": \"Greysia vs Fabiana\",\r\n    \"data_partida\": \"2022-05-30\",\r\n    \"tipo_jogo\": \"simples\",\r\n    \"modalidade\": \"misto\",\r\n    \"jogador_1\": 1,\r\n    \"jogador_2\": 0,\r\n    \"jogador_adversario_1\": 2,\r\n    \"jogador_adversario_2\": 0\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -162,6 +134,79 @@
 					]
 				},
 				"description": "**/post_partida**\n\nEntrada:\n\n*   não requer parametro\n    \n\nSaída êxito:\n\n``` json\n{\n    \"mensagem\": \"post_partida executado\"\n} \n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/get_partida",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/get_partida?id_partida=3",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"get_partida"
+					],
+					"query": [
+						{
+							"key": "id_partida",
+							"value": "3"
+						}
+					]
+				},
+				"description": "**/get_partida**\n\nEntrada:\n\n*   id_partida: int\n    \n\nSaída:\n\n*   Dados da partidar:\n    \n\n``` json\n{\n    \"partida_badminton\": {\n        \"data\": \"01-05-2022\",\n        \"id\": 3,\n        \"jogador_1\": 2,\n        \"jogador_2\": null,\n        \"jogador_adversario_1\": 1,\n        \"jogador_adversario_2\": null,\n        \"modalidade\": \"misto\",\n        \"partida_nome\": \"Fabiana vs Greysia\",\n        \"tipo_jogo\": \"simples\"\n    }\n}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/get_partidas",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/get_partidas",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"get_partidas"
+					]
+				},
+				"description": "**/get_partidas**\n\nEntrada:\n\n*   Não requer parâmetro de entrada\n    \n\nSaída:\n\n*   Lista de \"partidas\":\n    \n\n``` json\n{\n    \"partidas_badminton\": [\n        {\n            \"data\": \"01-05-2022\",\n            \"id\": 3,\n            \"jogador_1\": 2,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 1,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"partida_nome\": \"Fabiana vs Greysia\",\n            \"tipo_jogo\": \"simples\"\n        },\n        {\n            \"data\": \"30-05-2022\",\n            \"id\": 4,\n            \"jogador_1\": 1,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 2,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"partida_nome\": \"Greysia vs Fabiana\",\n            \"tipo_jogo\": \"simples\"\n        },\n        {\n            \"data\": \"30-05-2022\",\n            \"id\": 5,\n            \"jogador_1\": 1,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 2,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"partida_nome\": \"Greysia vs Fabiana\",\n            \"tipo_jogo\": \"simples\"\n        }\n    ]\n}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/upload_file",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/crist/Desktop/carolinaMartin.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://scoutbadmintonapi.herokuapp.com/upload_file",
+					"protocol": "https",
+					"host": [
+						"scoutbadmintonapi",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"upload_file"
+					]
+				},
+				"description": "**/upload**\n\nEntrada:\n\n*   não requer parâmetros\n    \n\nSaída:\n\n*   nome do arquivo\n    \n\n``` json\n{\n    \"mensagem\": {\n        \"nome_arquivo\": \"PusarlaVenkataSindhu.jpg\"\n    }\n}\n\n```"
 			},
 			"response": []
 		}

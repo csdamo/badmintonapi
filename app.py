@@ -167,14 +167,41 @@ def get_jogador():
 @app.route('/get_jogadores', methods=['GET'])
 def get_jogadores():
 
-    bloco = " select jogador.id, jogador.nome_jogador, jogador.data_nascimento, jogador.telefone, \
+    lista_id_jogador = None
+    if request.args.get('lista_id_jogador'):
+        lista_id_jogador = (request.args.get('lista_id_jogador')).replace(" ", "").split(',')
+        
+        for jogador in lista_id_jogador:
+            if not jogador.isdigit():
+                return jsonify({'erro' : 'request.args[lista_id_jogador] deve ser numerico'})
+
+    if not lista_id_jogador:
+        lista_id_jogador = '0'
+
+    posicao = 0
+    blocoi = " select jogador.id, jogador.nome_jogador, jogador.data_nascimento, jogador.telefone, \
                 jogador.email, jogador.lateralidade, jogador.foto \
                 from jogador "
-                
+    blocof = ""
+    tuplai = ()
+
+    if lista_id_jogador != '0':
+        for jogador_id in lista_id_jogador:
+            if posicao == 0:
+                blocof = " where jogador.id = %s "
+                tuplaf = (jogador_id,)
+                posicao += 1
+            else:
+                blocof = blocof + " or jogador.id = %s "
+                tuplaf = (tuplaf) + (jogador_id,)
+    
+    bloco = blocoi + blocof
+    tupla = tuplai + tuplaf
+    
     try:
         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
         cursor = connection.cursor()
-        cursor.execute(bloco)
+        cursor.execute(bloco, tupla)
         jogadores_data = cursor.fetchall()
 
     except (Exception, psycopg2.Error) as error:

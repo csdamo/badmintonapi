@@ -9,5 +9,6 @@ db.sqlite3
 settings.py
 settings-DESENV.py
 apibadminton.log
+apibadminton.json
 *.log
 .idea

@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"nome\": \"Carolina María Marín Martín\",\r\n    \"data_nascimento\": \"1993-06-15\",\r\n    \"telefone\": \"999655784\",\r\n    \"email\": \"carol@badminton\",\r\n    \"lateralidade\": \"naoinformado\",\r\n    \"foto\": \"\"\r\n}",
+					"raw": "{\r\n    \"nome\": \"Ygor Coelho de Oliveira\",\r\n    \"data_nascimento\": \"1996-11-24\",\r\n    \"telefone\": \"999655784\",\r\n    \"email\": \"ygor@badminton\",\r\n    \"lateralidade\": \"naoinformado\",\r\n    \"foto\": \"\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -62,15 +62,21 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/get_jogadores",
+					"raw": "{{url}}/get_jogadores?lista_id_jogador=",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"get_jogadores"
+					],
+					"query": [
+						{
+							"key": "lista_id_jogador",
+							"value": ""
+						}
 					]
 				},
-				"description": "**/get_jogadores**\n\nEntrada:\n\n*   StartFragment**lista_id_jogador**: lista de id de jogador - se vazio devolve todos os jogadores\n    EndFragment  \n    \n\nSaída:\n\n*   Lista de \"jogadores\":\n    \n\n``` json\n{\n    \"jogadores_badminton\": [\n        {\n            \"data_nascimento\": \"11-08-1987\",\n            \"email\": \"greysia@badminton\",\n            \"foto\": \"\",\n            \"id\": 1,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Greysia Polii\",\n            \"telefone\": \"999655874\"\n        },\n        {\n            \"data_nascimento\": \"27-07-1988\",\n            \"email\": \"fabi@badminton\",\n            \"foto\": \"\",\n            \"id\": 2,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Fabiana da Silva\",\n            \"telefone\": \"999655784\"\n        },\n        {\n            \"data_nascimento\": \"15-06-1993\",\n            \"email\": \"carol@badminton\",\n            \"foto\": \"\",\n            \"id\": 3,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Carolina María Marín Martín\",\n            \"telefone\": \"999655784\"\n        }\n    ]\n}\n\n```"
+				"description": "**/get_jogadores**\n\nEntrada:\n\n*   **lista_id_jogador**: lista de id de jogador - se vazio devolve todos os jogadores  \n    \n\nSaída:\n\n*   Lista de \"jogadores\":\n    \n\n``` json\n{\n    \"jogadores_badminton\": [\n        {\n            \"data_nascimento\": \"11-08-1987\",\n            \"email\": \"greysia@badminton\",\n            \"foto\": \"\",\n            \"id\": 1,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Greysia Polii\",\n            \"telefone\": \"999655874\"\n        },\n        {\n            \"data_nascimento\": \"27-07-1988\",\n            \"email\": \"fabi@badminton\",\n            \"foto\": \"\",\n            \"id\": 2,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Fabiana da Silva\",\n            \"telefone\": \"999655784\"\n        },\n        {\n            \"data_nascimento\": \"15-06-1993\",\n            \"email\": \"carol@badminton\",\n            \"foto\": \"\",\n            \"id\": 3,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Carolina María Marín Martín\",\n            \"telefone\": \"999655784\"\n        }\n    ]\n}\n\n```"
 			},
 			"response": []
 		},

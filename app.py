@@ -405,12 +405,14 @@ def post_partida():
 
     bloco = ("insert into partida (nome, data_partida, tipo_jogo, modalidade, jogador_1_id, jogador_2_id, \
                  jogador_adversario_1_id, jogador_adversario_2_id, criado_em, atualizado_em) \
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) \
+                    returning id")
 
     try:
         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
         cursor = connection.cursor()
         cursor.execute(bloco, sqlvar)
+        data_partida = cursor.fetchone()
 
     except (Exception, psycopg2.Error) as error:
         erro = str(error).rstrip()
@@ -422,8 +424,10 @@ def post_partida():
             connection.commit()
             cursor.close()
             connection.close()
-    
-    return jsonify({'mensagem' : "post_partida executado"})
+    partida = {}
+    partida['partida_id'] = data_partida[0]
+
+    return jsonify({'mensagem' : partida})
 
 
 @app.route('/get_partida', methods=['GET'])

@@ -2,7 +2,8 @@
 	"info": {
 		"_postman_id": "0a800f93-0fdb-4d61-bf96-fbb341395ff9",
 		"name": "badminton",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18207669"
 	},
 	"item": [
 		{
@@ -28,7 +29,7 @@
 						"post_jogador"
 					]
 				},
-				"description": "**/post_jogador**\n\nEntrada:\n\n*   não requer parametro\n    \n\nSaída êxito:\n\n``` json\n{ \"mensagem\": \"post_jogador executado\" }\n\n```"
+				"description": "**/post_jogador**\n\nEntrada:\n\n*   não requer parametro\n    \n\nBODY:\n\n``` json\n    schema = {\n        \"type\": \"object\",\n        \"required\": [ \"nome\", \"data_nascimento\", \"telefone\", \"email\", \"lateralidade\", \"foto\"],\n        \"properties\": {\n            \"nome\": {\n                \"type\": \"string\",\n                \"minLength\": 1,\n                \"maxLength\": 200\n            },\n            \"data_nascimento\": {\n                \"type\": \"string\",\n                \"format\": \"date\"\n            },\n            \"telefone\": {\n                \"type\": \"string\",\n                \"minLength\": 0,\n                \"maxLength\": 12\n            },\n            \"email\": {\n                \"type\": \"string\",\n                \"minLength\": 0,\n                \"maxLength\": 100\n            },\n            \"lateralidade\": {\n                \"type\": \"string\",\n                \"enum\": [\"naoinformado\", \"destro\", \"canhoto\", \"ambidestro\"]\n            },\n\n            \"foto\": {\n                \"type\": \"string\",\n                \"minLength\": 0,\n            }\n          }\n        }\n```\n\nSaída êxito:\n\n``` json\n{ \"mensagem\": \"post_jogador executado\" }\n\n```"
 			},
 			"response": []
 		},
@@ -139,7 +140,7 @@
 						"post_partida"
 					]
 				},
-				"description": "**/post_partida**\n\nEntrada:\n\n*   não requer parametro\n    \n\nSaída êxito:\n\n``` json\n{\n    \"mensagem\": \"post_partida executado\"\n} \n\n```"
+				"description": "**/post_partida**\n\nEntrada:\n\n*   não requer parametro\n    \n\nBODY:\n\n``` json\nschema = {\n        \"type\": \"object\",\n        \"required\": [\"nome\", \"data_partida\", \"tipo_jogo\", \"modalidade\", \"jogador_1\", \"jogador_2\", \"jogador_adversario_1\",  \"jogador_adversario_2\"],\n        \"properties\": {\n             \"nome\": {\n                \"type\": \"string\",\n                \"minLength\": 1,\n                \"maxLength\": 200\n            },\n            \"data_partida\": {\n                \"type\": \"string\",\n                \"format\": \"date\"\n            },\n            \"tipo_jogo\": {\n                \"type\": \"string\",\n                 \"enum\": [\"simples\", \"dupla\"]\n            },\n            \"modalidade\": {\n                \"type\": \"string\",\n                \"enum\": [\"misto\", \"feminino\", \"masculino\"]\n            },\n            \"jogador_1\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"jogador_2\": {\n                \"type\": \"integer\",\n            },\n            \"jogador_adversario_1\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"jogador_adversario_2\": {\n                \"type\": \"integer\",\n            }\n          }\n        }\n```\n\nSaída êxito:\n\n``` json\n{\n    \"mensagem\": \"post_partida executado\"\n} \n\n```"
 			},
 			"response": []
 		},

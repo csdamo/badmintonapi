@@ -65,6 +65,7 @@ def post_jogador():
 
             "foto": {
                 "type": "string",
+                "minLength": 0,
             }
           }
         }

@@ -1,10 +1,10 @@
 {
-    "SECRET_KEY":"SECRET_KEY",
-    "DATABASE_HOST":"DATABASE_HOST",
-    "DATABASE_NAME":"DATABASE_NAME",
-    "DATABASE_USER":"DATABASE_USER",
-    "DATABASE_PASSWORD":"DATABASE_PASSWORD",
-    "URLMEDIA":"URLMEDIA",
-    "UPLOAD_URL":"UPLOAD_URL",
-    "UPLOAD_PATH":"UPLOAD_PATH"
+    "SECRET_KEY":"msdcecumdlc1750",
+    "DATABASE_HOST":"ec2-3-223-213-207.compute-1.amazonaws.com",
+    "DATABASE_NAME":"dc5tderlsr25mn",
+    "DATABASE_USER":"bonycgfrtsocmd",
+    "DATABASE_PASSWORD":"37e4e1fc1f716ee6ea1116fd62e531e5e0581468c648c468cd534682fd1ff351",
+    "URLMEDIA":"/badmintonbd/media",
+    "UPLOAD_URL":"/badmintonbd/media",
+    "UPLOAD_PATH":"/badmintonbd/media/jogador"
  }

@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"nome\": \"Ygor Coelho de Oliveira\",\r\n    \"data_nascimento\": \"1996-11-24\",\r\n    \"telefone\": \"999655784\",\r\n    \"email\": \"ygor@badminton\",\r\n    \"lateralidade\": \"naoinformado\",\r\n    \"foto\": \"\"\r\n}",
+					"raw": "{\r\n    \"nome\": \"Francielton Farias\",\r\n    \"data_nascimento\": \"1996-03-12\",\r\n    \"telefone\": \"999655784\",\r\n    \"email\": \"francielton@badminton\",\r\n    \"lateralidade\": \"naoinformado\",\r\n    \"foto\": \"\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -29,7 +29,7 @@
 						"post_jogador"
 					]
 				},
-				"description": "**/post_jogador**\n\nEntrada:\n\n*   não requer parametro\n    \n\nBODY:\n\n``` json\n    schema = {\n        \"type\": \"object\",\n        \"required\": [ \"nome\", \"data_nascimento\", \"telefone\", \"email\", \"lateralidade\", \"foto\"],\n        \"properties\": {\n            \"nome\": {\n                \"type\": \"string\",\n                \"minLength\": 1,\n                \"maxLength\": 200\n            },\n            \"data_nascimento\": {\n                \"type\": \"string\",\n                \"format\": \"date\"\n            },\n            \"telefone\": {\n                \"type\": \"string\",\n                \"minLength\": 0,\n                \"maxLength\": 12\n            },\n            \"email\": {\n                \"type\": \"string\",\n                \"minLength\": 0,\n                \"maxLength\": 100\n            },\n            \"lateralidade\": {\n                \"type\": \"string\",\n                \"enum\": [\"naoinformado\", \"destro\", \"canhoto\", \"ambidestro\"]\n            },\n\n            \"foto\": {\n                \"type\": \"string\",\n                \"minLength\": 0,\n            }\n          }\n        }\n```\n\nSaída êxito:\n\n``` json\n{ \"mensagem\": \"post_jogador executado\" }\n\n```"
+				"description": "**/post_jogador**\n\n**Entrada**:\n\n*   não requer parametro\n    \n\n**Schema**:\n\n``` json\n    schema = {\n        \"type\": \"object\",\n        \"required\": [ \"nome\", \"data_nascimento\", \"telefone\", \"email\", \"lateralidade\", \"foto\"],\n        \"properties\": {\n            \"nome\": {\n                \"type\": \"string\",\n                \"minLength\": 1,\n                \"maxLength\": 200\n            },\n            \"data_nascimento\": {\n                \"type\": \"string\",\n                \"format\": \"date\"\n            },\n            \"telefone\": {\n                \"type\": \"string\",\n                \"minLength\": 0,\n                \"maxLength\": 12\n            },\n            \"email\": {\n                \"type\": \"string\",\n                \"minLength\": 0,\n                \"maxLength\": 100\n            },\n            \"lateralidade\": {\n                \"type\": \"string\",\n                \"enum\": [\"naoinformado\", \"destro\", \"canhoto\", \"ambidestro\"]\n            },\n            \"foto\": {\n                \"type\": \"string\",\n                \"minLength\": 0,\n            }\n          }\n        }\n\n```\n\n**Saída**:\n\n``` json\n{\n    \"Jogador\": {\n        \"data_nascimento\": \"12-03-1996\",\n        \"email\": \"francielton@badminton\",\n        \"foto\": \"jogador/\",\n        \"id\": 13,\n        \"lateralidade\": \"naoinformado\",\n        \"nome\": \"Francielton Farias\",\n        \"telefone\": \"999655784\"\n    }\n}\n\n```"
 			},
 			"response": []
 		},
@@ -39,7 +39,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/get_jogador?id_jogador=4",
+					"raw": "{{url}}/get_jogador?id_jogador=2",
 					"host": [
 						"{{url}}"
 					],
@@ -49,11 +49,11 @@
 					"query": [
 						{
 							"key": "id_jogador",
-							"value": "4"
+							"value": "2"
 						}
 					]
 				},
-				"description": "**/get_jogador**\n\nEntrada:\n\n*   id_jogadr: int\n    \n\nSaída:\n\n*   Dados do jogador:\n    \n\n``` json\n{\n    \"badminton\": {\n        \"data_nascimento\": \"27-07-1988\",\n        \"email\": \"fabi@badminton\",\n        \"foto\": \"\",\n        \"id\": 2,\n        \"lateralidade\": \"naoinformado\",\n        \"nome\": \"Fabiana da Silva\",\n        \"telefone\": \"999655784\"\n    }\n}\n\n```"
+				"description": "**/get_jogador**\n\n**Entrada**:\n\n*   id_jogadr: int (aceita apenas um id por vez)\n    \n\n**Saída**: Dados do jogador:\n\n``` json\n{\n    \"badminton\": {\n        \"data_nascimento\": \"27-07-1988\",\n        \"email\": \"fabi@badminton\",\n        \"foto\": \"\",\n        \"id\": 2,\n        \"lateralidade\": \"naoinformado\",\n        \"nome\": \"Fabiana da Silva\",\n        \"telefone\": \"999655784\"\n    }\n}\n\n```"
 			},
 			"response": []
 		},
@@ -63,7 +63,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/get_jogadores?lista_id_jogador=",
+					"raw": "{{url}}/get_jogadores?lista_id_jogador=1, 3, 7",
 					"host": [
 						"{{url}}"
 					],
@@ -73,11 +73,11 @@
 					"query": [
 						{
 							"key": "lista_id_jogador",
-							"value": ""
+							"value": "1, 3, 7"
 						}
 					]
 				},
-				"description": "**/get_jogadores**\n\nEntrada:\n\n*   **lista_id_jogador**: lista de id de jogador - se vazio devolve todos os jogadores  \n    \n\nSaída:\n\n*   Lista de \"jogadores\":\n    \n\n``` json\n{\n    \"jogadores_badminton\": [\n        {\n            \"data_nascimento\": \"11-08-1987\",\n            \"email\": \"greysia@badminton\",\n            \"foto\": \"\",\n            \"id\": 1,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Greysia Polii\",\n            \"telefone\": \"999655874\"\n        },\n        {\n            \"data_nascimento\": \"27-07-1988\",\n            \"email\": \"fabi@badminton\",\n            \"foto\": \"\",\n            \"id\": 2,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Fabiana da Silva\",\n            \"telefone\": \"999655784\"\n        },\n        {\n            \"data_nascimento\": \"15-06-1993\",\n            \"email\": \"carol@badminton\",\n            \"foto\": \"\",\n            \"id\": 3,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Carolina María Marín Martín\",\n            \"telefone\": \"999655784\"\n        }\n    ]\n}\n\n```"
+				"description": "**/get_jogadores**\n\n**Entrada**:\n\n*   lista_id_jogador: lista de ids de jogador - se vazio devolve todos os jogadores\n    \n\n**Saída**: lista de \"jogadores\":\n\n``` json\n{\n    \"jogadores_badminton\": [\n{\n    \"jogadores_badminton\": [\n        {\n            \"data_nascimento\": \"11-08-1987\",\n            \"email\": \"greysia@badminton\",\n            \"foto\": \"\",\n            \"id\": 1,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Greysia Polii\",\n            \"telefone\": \"999655874\"\n        },\n        {\n            \"data_nascimento\": \"15-06-1993\",\n            \"email\": \"carol@badminton\",\n            \"foto\": \"\",\n            \"id\": 3,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Carolina María Marín Martín\",\n            \"telefone\": \"999655784\"\n        },\n        {\n            \"data_nascimento\": \"24-11-1996\",\n            \"email\": \"ygor@badminton\",\n            \"foto\": \"\",\n            \"id\": 7,\n            \"lateralidade\": \"naoinformado\",\n            \"nome\": \"Ygor Coelho de Oliveira\",\n            \"telefone\": \"999655784\"\n        }\n    ]\n}\n\n```"
 			},
 			"response": []
 		},
@@ -95,7 +95,7 @@
 						"get_golpes"
 					]
 				},
-				"description": "**/get_golpes**\n\nEntrada:\n\n*   Não requer parâmetro de entrada\n    \n\nSaída:\n\n*   Lista de \"golpes\":\n    \n\n``` json\n{\n    \"golpes_badminton\": [\n        {\n            \"descricao\": \"Saque\",\n            \"d\": 1\n        },\n        {\n            \"descricao\": \"Forehand\",\n            \"id\": 2\n        },\n        {\n            \"descricao\": \"Backhand\",\n            \"id\": 3\n        },\n        {\n            \"descricao\": \"Clear\",\n            \"id\": 4\n        },\n        {\n            \"descricao\": \"Drop\",\n            \"id\": 5\n        }\n    ]\n}\n\n```"
+				"description": "**/get_golpes**\n\n**Entrada**:\n\n*   Não requer parâmetro de entrada\n    \n\n**Saída**: lista de \"golpes\":\n\n``` json\n{\n    \"golpes_badminton\": [\n        {\n            \"descricao\": \"Saque\",\n            \"d\": 1\n        },\n        {\n            \"descricao\": \"Forehand\",\n            \"id\": 2\n        },\n        {\n            \"descricao\": \"Backhand\",\n            \"id\": 3\n        },\n        {\n            \"descricao\": \"Clear\",\n            \"id\": 4\n        },\n        {\n            \"descricao\": \"Drop\",\n            \"id\": 5\n        }\n    ]\n}\n\n```"
 			},
 			"response": []
 		},
@@ -113,7 +113,7 @@
 						"get_quadrantes"
 					]
 				},
-				"description": "**/get_quadrante**\n\nEntrada:\n\n*   Não requer parâmetro de entrada\n    \n\nSaída:\n\n*   Lista de \"quadrantes\":\n    \n\n``` json\n{\n    \"quadrantes\": [\n        {\n            \"descricao\": \"Q 01\",\n            \"id\": 1,\n            \"lado\": \"esquerdo\"\n        }\n    ]\n}\n\n```"
+				"description": "**/get_quadrante**\n\n**Entrada**:\n\n*   Não requer parâmetro de entrada\n    \n\n**Saída**: lista de \"quadrantes\":\n\n``` json\n{\n    \"quadrantes\": [\n        {\n            \"descricao\": \"Q 01\",\n            \"id\": 1,\n            \"lado\": \"esquerdo\"\n        }\n    ]\n}\n\n```"
 			},
 			"response": []
 		},
@@ -124,7 +124,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"nome\": \"Greysia vs Fabiana\",\r\n    \"data_partida\": \"2022-05-30\",\r\n    \"tipo_jogo\": \"simples\",\r\n    \"modalidade\": \"misto\",\r\n    \"jogador_1\": 1,\r\n    \"jogador_2\": 0,\r\n    \"jogador_adversario_1\": 2,\r\n    \"jogador_adversario_2\": 0\r\n}",
+					"raw": "{\r\n    \"nome\": \"Greysia vs Fabiana\",\r\n    \"data_partida\": \"2022-05-30\",\r\n    \"tipo_jogo\": \"dupla\",\r\n    \"modalidade\": \"misto\",\r\n    \"jogador_1\": 1,\r\n    \"jogador_2\": 3,\r\n    \"jogador_adversario_1\": 2,\r\n    \"jogador_adversario_2\": 4\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -140,7 +140,7 @@
 						"post_partida"
 					]
 				},
-				"description": "**/post_partida**\n\nEntrada:\n\n*   não requer parametro\n    \n\nBODY:\n\n``` json\nschema = {\n        \"type\": \"object\",\n        \"required\": [\"nome\", \"data_partida\", \"tipo_jogo\", \"modalidade\", \"jogador_1\", \"jogador_2\", \"jogador_adversario_1\",  \"jogador_adversario_2\"],\n        \"properties\": {\n             \"nome\": {\n                \"type\": \"string\",\n                \"minLength\": 1,\n                \"maxLength\": 200\n            },\n            \"data_partida\": {\n                \"type\": \"string\",\n                \"format\": \"date\"\n            },\n            \"tipo_jogo\": {\n                \"type\": \"string\",\n                 \"enum\": [\"simples\", \"dupla\"]\n            },\n            \"modalidade\": {\n                \"type\": \"string\",\n                \"enum\": [\"misto\", \"feminino\", \"masculino\"]\n            },\n            \"jogador_1\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"jogador_2\": {\n                \"type\": \"integer\",\n            },\n            \"jogador_adversario_1\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"jogador_adversario_2\": {\n                \"type\": \"integer\",\n            }\n          }\n        }\n\n```\n\nSaída êxito:\n\n``` json\n{\n    \"mensagem\": {\n       \"partida_id\": 9\n    }\n}\n\n```"
+				"description": "**/post_partida**\n\n**Entrada**:\n\n*   não requer parametro\n    \n\n**Schema**:\n\n``` json\nschema = {\n        \"type\": \"object\",\n        \"required\": [\"nome\", \"data_partida\", \"tipo_jogo\", \"modalidade\", \"jogador_1\", \"jogador_2\", \"jogador_adversario_1\",  \"jogador_adversario_2\"],\n        \"properties\": {\n             \"nome\": {\n                \"type\": \"string\",\n                \"minLength\": 1,\n                \"maxLength\": 200\n            },\n            \"data_partida\": {\n                \"type\": \"string\",\n                \"format\": \"date\"\n            },\n            \"tipo_jogo\": {\n                \"type\": \"string\",\n                 \"enum\": [\"simples\", \"dupla\"]\n            },\n            \"modalidade\": {\n                \"type\": \"string\",\n                \"enum\": [\"misto\", \"feminino\", \"masculino\"]\n            },\n            \"jogador_1\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"jogador_2\": {\n                \"type\": \"integer\",\n            },\n            \"jogador_adversario_1\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"jogador_adversario_2\": {\n                \"type\": \"integer\",\n            }\n          }\n        }\n\n```\n\n**Saída** :\n\n``` json\n{\n    \"partida\": {\n        \"data\": \"Mon, 30 May 2022 00:00:00 GMT\",\n        \"jogador_1_id\": 1,\n        \"jogador_2_id\": 3,\n        \"jogador_adversario_1_id\": 2,\n        \"jogador_adversario_2_id\": 4,\n        \"modalidade\": \"misto\",\n        \"nome_partida\": \"Greysia vs Fabiana\",\n        \"partida_id\": 13,\n        \"tipo_jogo\": \"dupla\"\n    }\n}\n\n```"
 			},
 			"response": []
 		},
@@ -164,7 +164,7 @@
 						}
 					]
 				},
-				"description": "**/get_partida**\n\nEntrada:\n\n*   id_partida: int\n    \n\nSaída:\n\n*   Dados da partidar:\n    \n\n``` json\n{\n    \"partida_badminton\": {\n        \"data\": \"01-05-2022\",\n        \"id\": 3,\n        \"jogador_1\": 2,\n        \"jogador_2\": null,\n        \"jogador_adversario_1\": 1,\n        \"jogador_adversario_2\": null,\n        \"modalidade\": \"misto\",\n        \"partida_nome\": \"Fabiana vs Greysia\",\n        \"tipo_jogo\": \"simples\"\n    }\n}\n\n```"
+				"description": "**/get_partida**\n\n**Entrada**:\n\n*   id_partida: int\n    \n\n**Saída**: Dados da partidar:\n\n``` json\n{\n    \"partida_badminton\": {\n        \"data\": \"01-05-2022\",\n        \"id\": 3,\n        \"jogador_1\": 2,\n        \"jogador_2\": null,\n        \"jogador_adversario_1\": 1,\n        \"jogador_adversario_2\": null,\n        \"modalidade\": \"misto\",\n        \"partida_nome\": \"Fabiana vs Greysia\",\n        \"tipo_jogo\": \"simples\"\n    }\n}\n\n```"
 			},
 			"response": []
 		},
@@ -174,15 +174,21 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/get_partidas",
+					"raw": "{{url}}/get_partidas?lista_id_partida=4, 5, 8",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"get_partidas"
+					],
+					"query": [
+						{
+							"key": "lista_id_partida",
+							"value": "4, 5, 8"
+						}
 					]
 				},
-				"description": "**/get_partidas**\n\nEntrada:\n\n*   Não requer parâmetro de entrada\n    \n\nSaída:\n\n*   Lista de \"partidas\":\n    \n\n``` json\n{\n    \"partidas_badminton\": [\n        {\n            \"data\": \"01-05-2022\",\n            \"id\": 3,\n            \"jogador_1\": 2,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 1,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"partida_nome\": \"Fabiana vs Greysia\",\n            \"tipo_jogo\": \"simples\"\n        },\n        {\n            \"data\": \"30-05-2022\",\n            \"id\": 4,\n            \"jogador_1\": 1,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 2,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"partida_nome\": \"Greysia vs Fabiana\",\n            \"tipo_jogo\": \"simples\"\n        },\n        {\n            \"data\": \"30-05-2022\",\n            \"id\": 5,\n            \"jogador_1\": 1,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 2,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"partida_nome\": \"Greysia vs Fabiana\",\n            \"tipo_jogo\": \"simples\"\n        }\n    ]\n}\n\n```"
+				"description": "**/get_partidas**\n\n**Entrada**:\n\n*   Não requer parâmetro de entrada\n    \n\n**Saída**: lista de \"partidas\":\n\n``` json\n{\n    \"partidas_badminton\": [\n        {\n            \"data\": \"30-05-2022\",\n            \"id\": 4,\n            \"jogador_1\": 3,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 2,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"partida_nome\": \"Carolina vs Fabiana\",\n            \"tipo_jogo\": \"simples\"\n        },\n        {\n            \"data\": \"30-05-2022\",\n            \"id\": 5,\n            \"jogador_1\": 1,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 3,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"partida_nome\": \"Greysia vs Carolina\",\n            \"tipo_jogo\": \"simples\"\n        },\n        {\n            \"data\": \"30-05-2022\",\n            \"id\": 8,\n            \"jogador_1\": 1,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 2,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"partida_nome\": \"Greysia vs Fabiana\",\n            \"tipo_jogo\": \"simples\"\n        }\n    ]\n}\n\n```"
 			},
 			"response": []
 		},

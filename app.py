@@ -488,19 +488,55 @@ def get_partida():
         if (connection):
             cursor.close()
             connection.close()
-    lineout_jogador = {}
-    if partida_data:
-        lineout_jogador['id'] = partida_data[0]
-        lineout_jogador['data'] = partida_data[1].strftime('%d-%m-%Y')
-        lineout_jogador['tipo_jogo'] = partida_data[2]
-        lineout_jogador['modalidade'] = partida_data[3]
-        lineout_jogador['partida_nome'] = partida_data[4]
-        lineout_jogador['jogador_1'] = partida_data[5]
-        lineout_jogador['jogador_2'] = partida_data[6]
-        lineout_jogador['jogador_adversario_1'] = partida_data[7]
-        lineout_jogador['jogador_adversario_2'] = partida_data[8]
 
-    return jsonify({'partida_badminton' : lineout_jogador})
+    lineout_partida = {}
+    if partida_data:
+        id_partida = partida_data[0] 
+        lineout_partida['id'] = partida_data[0]
+        lineout_partida['data'] = partida_data[1].strftime('%d-%m-%Y')
+        lineout_partida['tipo_jogo'] = partida_data[2]
+        lineout_partida['modalidade'] = partida_data[3]
+        lineout_partida['partida_nome'] = partida_data[4]
+        lineout_partida['jogador_1'] = partida_data[5]
+        lineout_partida['jogador_2'] = partida_data[6]
+        lineout_partida['jogador_adversario_1'] = partida_data[7]
+        lineout_partida['jogador_adversario_2'] = partida_data[8]
+
+
+        # Pesquisa os sets da partida
+        bloco = " select set.id, set.ordem from set where set.partida_id = %s "
+
+        sqlvar = (id_partida,)
+                    
+        try:
+            connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+            cursor = connection.cursor()
+            cursor.execute(bloco, sqlvar)
+            set_ordem_data = cursor.fetchall()
+            
+
+        except (Exception, psycopg2.Error) as error:
+            erro = str(error).rstrip()
+            erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+            return jsonify({'erro' : erro_banco})
+
+        finally:
+            if (connection):
+                cursor.close()
+                connection.close()
+
+        output_set = []
+
+        for set_data in set_ordem_data:
+            set_partida = {}
+            set_partida['id_set'] = set_data[0]
+            set_partida['ordem_set'] = set_data[1]
+            
+            output_set.append(set_partida)
+
+        lineout_partida['sets'] = output_set
+
+    return jsonify({'partida_badminton' : lineout_partida})
 
 
 @app.route('/get_partidas', methods=['GET'])
@@ -557,6 +593,7 @@ def get_partidas():
     if partidas_data:
         for line in partidas_data:
             lineout_partida = {}
+            id_partida = line[0]
             lineout_partida['id'] = line[0]
             lineout_partida['data'] = line[1].strftime('%d-%m-%Y')
             lineout_partida['tipo_jogo'] = line[2]
@@ -567,11 +604,42 @@ def get_partidas():
             lineout_partida['jogador_adversario_1'] = line[7]
             lineout_partida['jogador_adversario_2'] = line[8]
 
+            # Pesquisa os sets da partida
+            bloco = " select set.id, set.ordem from set where set.partida_id = %s "
+
+            sqlvar = (id_partida,)
+                        
+            try:
+                connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+                cursor = connection.cursor()
+                cursor.execute(bloco, sqlvar)
+                set_ordem_data = cursor.fetchall()
+                
+
+            except (Exception, psycopg2.Error) as error:
+                erro = str(error).rstrip()
+                erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+                return jsonify({'erro' : erro_banco})
+
+            finally:
+                if (connection):
+                    cursor.close()
+                    connection.close()
+
+            output_set = []
+  
+            for set_data in set_ordem_data:
+                set_partida = {}
+                set_partida['id_set'] = set_data[0]
+                set_partida['ordem_set'] = set_data[1]
+                
+                output_set.append(set_partida)
+
+            lineout_partida['sets'] = output_set
             output_partidas.append(lineout_partida)
 
     return jsonify({'partidas_badminton' : output_partidas})
 
-    
 
 LOGFILE = 'apibadminton.log'   #Log-File-Name
 LOGFILESIZE = 5000000    #Log-File-Size (bytes)

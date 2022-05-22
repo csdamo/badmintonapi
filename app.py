@@ -90,12 +90,15 @@ def post_jogador():
 
     bloco = ("insert into jogador (nome_jogador, data_nascimento, telefone, \
                 email, lateralidade, foto, criado_em, atualizado_em) \
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s) \
+                returning id, nome_jogador, data_nascimento, telefone, \
+                email, lateralidade, foto ")
 
     try:
         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
         cursor = connection.cursor()
         cursor.execute(bloco, tupla)
+        data_jogador = cursor.fetchone()
 
     except (Exception, psycopg2.Error) as error:
         erro = str(error).rstrip()
@@ -107,8 +110,17 @@ def post_jogador():
             connection.commit()
             cursor.close()
             connection.close()
+    if data_jogador:
+        jogador= {}
+        jogador['id'] = data_jogador[0]
+        jogador['nome'] = data_jogador[1]
+        jogador['data_nascimento'] = data_jogador[2].strftime('%d-%m-%Y')
+        jogador['telefone'] = data_jogador[3]
+        jogador['email'] = data_jogador[4]
+        jogador['lateralidade'] = data_jogador[5]
+        jogador['foto'] = data_jogador[6]
     
-    return jsonify({'mensagem' : "post_jogador executado"})
+    return jsonify({'Jogador' : jogador})
 
 
 @app.route('/get_jogador', methods=['GET'])
@@ -406,7 +418,8 @@ def post_partida():
     bloco = ("insert into partida (nome, data_partida, tipo_jogo, modalidade, jogador_1_id, jogador_2_id, \
                  jogador_adversario_1_id, jogador_adversario_2_id, criado_em, atualizado_em) \
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) \
-                    returning id")
+                    returning id, nome, data_partida, tipo_jogo, modalidade, jogador_1_id, jogador_2_id, \
+                 jogador_adversario_1_id, jogador_adversario_2_id")
 
     try:
         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
@@ -426,8 +439,16 @@ def post_partida():
             connection.close()
     partida = {}
     partida['partida_id'] = data_partida[0]
+    partida['nome_partida'] = data_partida[1]
+    partida['data'] = data_partida[2]
+    partida['tipo_jogo'] = data_partida[3]
+    partida['modalidade'] = data_partida[4]
+    partida['jogador_1_id'] = data_partida[5]
+    partida['jogador_2_id'] = data_partida[6]
+    partida['jogador_adversario_1_id'] = data_partida[7]
+    partida['jogador_adversario_2_id'] = data_partida[8]
 
-    return jsonify({'mensagem' : partida})
+    return jsonify({'partida' : partida})
 
 
 @app.route('/get_partida', methods=['GET'])
@@ -485,14 +506,41 @@ def get_partida():
 @app.route('/get_partidas', methods=['GET'])
 def get_partidas():
 
-    bloco = " select partida.id, partida.data_partida, partida.tipo_jogo, partida.modalidade, partida.nome, \
+    lista_id_partida = None
+    if request.args.get('lista_id_partida'):
+        lista_id_partida = (request.args.get('lista_id_partida')).replace(" ", "").split(',')
+        
+        for partida in lista_id_partida:
+            if not partida.isdigit():
+                return jsonify({'erro' : 'request.args[lista_id_partida] deve ser numerico'})
+
+    if not lista_id_partida:
+        lista_id_partida = '0'
+
+    posicao = 0
+    blocoi = " select partida.id, partida.data_partida, partida.tipo_jogo, partida.modalidade, partida.nome, \
                 partida.jogador_1_id, partida.jogador_2_id, partida.jogador_adversario_1_id, partida.jogador_adversario_2_id \
                 from partida "
                 
+    blocof = ""
+    tupla = ()
+ 
+    if lista_id_partida != '0':
+        for partida_id in lista_id_partida:
+            if posicao == 0:
+                blocof = " where partida.id = %s "
+                tupla = (partida_id, )
+                posicao += 1
+            else:
+                blocof = blocof + " or partida.id = %s "
+                tupla = (tupla) + (partida_id, )
+    
+    bloco = blocoi + blocof
+
     try:
         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
         cursor = connection.cursor()
-        cursor.execute(bloco)
+        cursor.execute(bloco, tupla)
         partidas_data = cursor.fetchall()
 
     except (Exception, psycopg2.Error) as error:

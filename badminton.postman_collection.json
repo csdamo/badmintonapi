@@ -193,6 +193,34 @@
 			"response": []
 		},
 		{
+			"name": "/post_set",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/post_set?id_partida=4&ordem_set=1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"post_set"
+					],
+					"query": [
+						{
+							"key": "id_partida",
+							"value": "4"
+						},
+						{
+							"key": "ordem_set",
+							"value": "1"
+						}
+					]
+				},
+				"description": "**/post_set**\n\n**Entrada**:\n\n*   id_partida: int\n*   ordem_set: int\n    \n\n**Saída**: Dados do set:\n\n``` json\n{\n    \"set_criado\": {\n        \"ordem_set\": 1,\n        \"partida_id\": 4,\n        \"set_id\": 10\n    }\n}\n\n```"
+			},
+			"response": []
+		},
+		{
 			"name": "/upload_file",
 			"request": {
 				"method": "POST",

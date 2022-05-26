@@ -1,8 +1,5 @@
 from flask import Flask, request, jsonify, make_response, render_template
 import psycopg2
-# import uuid
-# from werkzeug.security import generate_password_hash, check_password_hash
-# import jwt
 import datetime
 from functools import wraps
 from jsonschema import validate, ValidationError, SchemaError
@@ -13,8 +10,6 @@ import warnings
 import locale
 import requests
 
-# from flask_mail import Mail
-# from flask_mail import Message
 from threading import Thread
 
 from flask_cors import CORS
@@ -29,6 +24,7 @@ CORS(app)
 
 @app.route('/post_jogador', methods=['POST'])
 def post_jogador():
+    """ Cria registro de um jogador no banco de dados """
 
     data = request.get_json()
 
@@ -78,22 +74,22 @@ def post_jogador():
         mensagem = 'JSON inválido.' + ' - Path: ' + str(e.path)  + ' - Message: ' + str(e.message)
         return jsonify({'erro' : mensagem})
 
-    datetimenow = datetime.datetime.now()
+    # variáveis com os dados a serem salvos
     nome = data["nome"]
     data_nascimento = data["data_nascimento"]
     telefone = data["telefone"]
     email = data["email"]
     lateralidade = data["lateralidade"]
-    foto = 'jogador/' + data["foto"]
+    foto = 'jogador/' + data["foto"]  # ainda não implementado
+    datetimenow = datetime.datetime.now()
     
+    # Insert no banco de dados
     tupla = (nome, data_nascimento, telefone, email, lateralidade, foto, datetimenow, datetimenow)
-
     bloco = ("insert into jogador (nome_jogador, data_nascimento, telefone, \
                 email, lateralidade, foto, criado_em, atualizado_em) \
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s) \
                 returning id, nome_jogador, data_nascimento, telefone, \
                 email, lateralidade, foto ")
-
     try:
         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
         cursor = connection.cursor()
@@ -110,8 +106,10 @@ def post_jogador():
             connection.commit()
             cursor.close()
             connection.close()
+    
+    # Dados a serem retornados após salvamento do registro
+    jogador= {}
     if data_jogador:
-        jogador= {}
         jogador['id'] = data_jogador[0]
         jogador['nome'] = data_jogador[1]
         jogador['data_nascimento'] = data_jogador[2].strftime('%d-%m-%Y')
@@ -125,20 +123,21 @@ def post_jogador():
 
 @app.route('/get_jogador', methods=['GET'])
 def get_jogador():
+    """ Devolve dados do jogador conforme id informado - esta rota pode ser substituida pela rota get_jogadores """
 
+    # verifica parâmetro recebido
     id_jogador = None
     
     if request.args.get('id_jogador'):
-        id_jogador = request.args.get('id_jogador')
-        
+        id_jogador = request.args.get('id_jogador')  
+    
     if not id_jogador:
         id_jogador = '0'
-
+    
     if not id_jogador.isdigit():
         return jsonify({'erro' : 'request.args[id_jogador] deve ser numerico'})
 
-
-
+    # Pesquisa jogador conforme id informado no parâmetro
     bloco = " select jogador.id, jogador.nome_jogador, jogador.data_nascimento, jogador.telefone, \
                 jogador.email, jogador.lateralidade, jogador.foto \
                 from jogador where jogador.id = %s"
@@ -159,9 +158,10 @@ def get_jogador():
         if (connection):
             cursor.close()
             connection.close()
+    
+    # Devolve dados do jogador pesquisado
     lineout_jogador = {}
-    if jogadore_data:
-        
+    if jogadore_data:    
         lineout_jogador['id'] = jogadore_data[0]
         lineout_jogador['nome'] = jogadore_data[1]
         lineout_jogador['data_nascimento'] = jogadore_data[2].strftime('%d-%m-%Y')
@@ -179,8 +179,12 @@ def get_jogador():
 
 @app.route('/get_jogadores', methods=['GET'])
 def get_jogadores():
+    """ Devolve dados do(s) jogadore(s) conforme id(s) informado(s) 
+        ou devolve todos os jogadores caso parametro esteja vazio"""
 
+    # verifica parâmetro recebido
     lista_id_jogador = None
+    
     if request.args.get('lista_id_jogador'):
         lista_id_jogador = (request.args.get('lista_id_jogador')).replace(" ", "").split(',')
         
@@ -191,6 +195,7 @@ def get_jogadores():
     if not lista_id_jogador:
         lista_id_jogador = '0'
 
+    # Pesquisa jogadores conforme ids informados no parâmetro
     posicao = 0
     blocoi = " select jogador.id, jogador.nome_jogador, jogador.data_nascimento, jogador.telefone, \
                 jogador.email, jogador.lateralidade, jogador.foto \
@@ -198,7 +203,6 @@ def get_jogadores():
     blocof = ""
     tupla = ()
  
-
     if lista_id_jogador != '0':
         for jogador_id in lista_id_jogador:
             if posicao == 0:
@@ -227,6 +231,7 @@ def get_jogadores():
             cursor.close()
             connection.close()
 
+    # Devolve dados dos jogadores pesquisado
     output_jogadores = []
     if jogadores_data:
         for line in jogadores_data:
@@ -250,31 +255,35 @@ def get_jogadores():
 
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
+    """ Faz upload de arquivo para repositório """
 
+    # Verifica se arquivo foi carregado
     if 'file' not in request.files:
         return jsonify({'erro' : 'Arquivo não carregado'})
-
+    
     file = request.files['file']
-
+    
     if file.filename == '':
         return jsonify({'erro' : 'Arquivo não carregado'})
 
     if file:
-        unique_name = str(uuid.uuid4().hex) + file.filename
-        filename = secure_filename(unique_name)
-        file.save(os.path.join(config['UPLOAD_PATH'], filename))
+        unique_name = str(uuid.uuid4().hex) + file.filename  # Atribui um nome único ao arquivo
+        filename = secure_filename(unique_name)  # Verifica a segurança do nome do arquivo
+        file.save(os.path.join(config['UPLOAD_PATH'], filename))  # Salva arquivo em repositório remoto
 
         url_file_uploaded = config['UPLOAD_URL'] + '/' + filename
 
+        # Devolve o nome do arquivo para ser salvo no banco de dados
         lineout = {}
         lineout['nome_arquivo'] = filename
-
         return jsonify({'mensagem' : lineout})
 
 
 @app.route('/get_golpes', methods=['GET'])
 def get_golpes():
-
+    """ Devolve lista de golpes de badminton """
+    
+    # Pesquisa tods os golpes de badminton cadastrados
     bloco = " select golpe.id, golpe.descricao_golpe from golpe "
                 
     try:
@@ -292,7 +301,7 @@ def get_golpes():
         if (connection):
             cursor.close()
             connection.close()
-
+    # Devolve lista com dados dos golpes de badminton
     output_golpe = []
     if golpe_data:
         for line in golpe_data:
@@ -301,14 +310,15 @@ def get_golpes():
             lineout_golpe['descricao'] = line[1]
         
             output_golpe.append(lineout_golpe)
-    
 
     return jsonify({'golpes_badminton' : output_golpe})
 
 
 @app.route('/get_quadrantes', methods=['GET'])
 def get_quadrantes():
-
+    """ Devolve lista de quadrantes """
+    
+    # Pesquisa tods os quadrantes cadastrados
     bloco = " select quadrante.id, quadrante.descricao_quadrante, quadrante.lado \
                  from quadrante "
                 
@@ -328,6 +338,7 @@ def get_quadrantes():
             cursor.close()
             connection.close()
 
+    # Devolve lista com dados dos quadrantes
     output_quadrante = []
     if quadrante_data:
         for line in quadrante_data:
@@ -338,13 +349,13 @@ def get_quadrantes():
         
             output_quadrante.append(lineout_quadrante)
     
-
     return jsonify({'quadrantes' : output_quadrante})
 
 
 @app.route('/post_partida', methods=['POST'])
 def post_partida():
-
+    """ Cria registro da partida no banco de dados """
+    
     data = request.get_json()
 
     if not data:
@@ -398,8 +409,7 @@ def post_partida():
         mensagem = 'JSON inválido.' + ' - Path: ' + str(e.path)  + ' - Message: ' + str(e.message)
         return jsonify({'erro' : mensagem})
 
-
-    datetimenow = datetime.datetime.now()
+    # Variáveis com os dados a serem salvos
     nome = data["nome"]
     data_partida = data["data_partida"]
     tipo_jogo = data["tipo_jogo"]
@@ -408,11 +418,13 @@ def post_partida():
     jogador_2 = data["jogador_2"]
     jogador_adversario_1 = data["jogador_adversario_1"]
     jogador_adversario_2 = data["jogador_adversario_2"]
+    datetimenow = datetime.datetime.now()
 
     if tipo_jogo == 'simples':
         jogador_2 = None
         jogador_adversario_2 = None
     
+    # Insert no banco de dados
     sqlvar = (nome, data_partida, tipo_jogo, modalidade, jogador_1, jogador_2, jogador_adversario_1, jogador_adversario_2, datetimenow, datetimenow)
 
     bloco = ("insert into partida (nome, data_partida, tipo_jogo, modalidade, jogador_1_id, jogador_2_id, \
@@ -437,23 +449,28 @@ def post_partida():
             connection.commit()
             cursor.close()
             connection.close()
+
+    # Dados a serem retornados após salvamento do registro
     partida = {}
-    partida['partida_id'] = data_partida[0]
-    partida['nome_partida'] = data_partida[1]
-    partida['data'] = data_partida[2]
-    partida['tipo_jogo'] = data_partida[3]
-    partida['modalidade'] = data_partida[4]
-    partida['jogador_1_id'] = data_partida[5]
-    partida['jogador_2_id'] = data_partida[6]
-    partida['jogador_adversario_1_id'] = data_partida[7]
-    partida['jogador_adversario_2_id'] = data_partida[8]
+    if data_partida:
+        partida['partida_id'] = data_partida[0]
+        partida['nome_partida'] = data_partida[1]
+        partida['data'] = data_partida[2]
+        partida['tipo_jogo'] = data_partida[3]
+        partida['modalidade'] = data_partida[4]
+        partida['jogador_1_id'] = data_partida[5]
+        partida['jogador_2_id'] = data_partida[6]
+        partida['jogador_adversario_1_id'] = data_partida[7]
+        partida['jogador_adversario_2_id'] = data_partida[8]
 
     return jsonify({'partida' : partida})
 
 
 @app.route('/get_partida', methods=['GET'])
 def get_partida():
+    """ Devolve dados da partida conforme id informado - esta rota pode ser substituida pela rota get_partidas """
 
+    # verifica parâmetro recebido
     id_partida = None
     
     if request.args.get('id_partida'):
@@ -466,7 +483,7 @@ def get_partida():
         return jsonify({'erro' : 'request.args[id_partida] deve ser numerico'})
 
 
-
+    # Pesquisa jogador conforme id informado no parâmetro
     bloco = " select partida.id, partida.data_partida, partida.tipo_jogo, partida.modalidade, partida.nome, \
                 partida.jogador_1_id, partida.jogador_2_id, partida.jogador_adversario_1_id, partida.jogador_adversario_2_id \
                 from partida where partida.id = %s"
@@ -489,6 +506,7 @@ def get_partida():
             cursor.close()
             connection.close()
 
+    # Devolve dados da partida pesquisado
     lineout_partida = {}
     if partida_data:
         id_partida = partida_data[0] 
@@ -501,7 +519,6 @@ def get_partida():
         lineout_partida['jogador_2'] = partida_data[6]
         lineout_partida['jogador_adversario_1'] = partida_data[7]
         lineout_partida['jogador_adversario_2'] = partida_data[8]
-
 
         # Pesquisa os sets da partida
         bloco = " select set.id, set.ordem from set where set.partida_id = %s "
@@ -525,14 +542,15 @@ def get_partida():
                 cursor.close()
                 connection.close()
 
+        # Devolve os sets relacionados à partida pesquisada
         output_set = []
-
-        for set_data in set_ordem_data:
-            set_partida = {}
-            set_partida['id_set'] = set_data[0]
-            set_partida['ordem_set'] = set_data[1]
-            
-            output_set.append(set_partida)
+        if set_ordem_data:
+            for set_data in set_ordem_data:
+                set_partida = {}
+                set_partida['id_set'] = set_data[0]
+                set_partida['ordem_set'] = set_data[1]
+                
+                output_set.append(set_partida)
 
         lineout_partida['sets'] = output_set
 
@@ -541,7 +559,10 @@ def get_partida():
 
 @app.route('/get_partidas', methods=['GET'])
 def get_partidas():
-
+    """ Devolve dados da(s) partidas(s) conforme id(s) informado(s) 
+    ou devolve todas as partidas caso parametro esteja vazio"""
+    
+    # Verifica parâmetro recebido
     lista_id_partida = None
     if request.args.get('lista_id_partida'):
         lista_id_partida = (request.args.get('lista_id_partida')).replace(" ", "").split(',')
@@ -552,7 +573,8 @@ def get_partidas():
 
     if not lista_id_partida:
         lista_id_partida = '0'
-
+    
+    # Pesquisa jogador conforme id informado no parâmetro
     posicao = 0
     blocoi = " select partida.id, partida.data_partida, partida.tipo_jogo, partida.modalidade, partida.nome, \
                 partida.jogador_1_id, partida.jogador_2_id, partida.jogador_adversario_1_id, partida.jogador_adversario_2_id \
@@ -588,7 +610,8 @@ def get_partidas():
         if (connection):
             cursor.close()
             connection.close()
-
+    
+    # Devolve dados das partidas pesquisadas
     output_partidas = []
     if partidas_data:
         for line in partidas_data:
@@ -626,19 +649,83 @@ def get_partidas():
                     cursor.close()
                     connection.close()
 
+            # Devolve os sets relacionados às partidas pesquisadas
             output_set = []
-  
-            for set_data in set_ordem_data:
-                set_partida = {}
-                set_partida['id_set'] = set_data[0]
-                set_partida['ordem_set'] = set_data[1]
-                
-                output_set.append(set_partida)
+            if set_ordem_data:
+                for set_data in set_ordem_data:
+                    set_partida = {}
+                    set_partida['id_set'] = set_data[0]
+                    set_partida['ordem_set'] = set_data[1]
+                    
+                    output_set.append(set_partida)
 
             lineout_partida['sets'] = output_set
             output_partidas.append(lineout_partida)
 
     return jsonify({'partidas_badminton' : output_partidas})
+
+
+@app.route('/post_set', methods=['POST'])
+def post_set():
+    """ Cria registro do set no banco de dados """
+
+    # Verifica parâmetros de entrada
+    id_partida = None
+    
+    if request.args.get('id_partida'):
+        id_partida = request.args.get('id_partida')
+        
+    if not id_partida:
+        id_partida = '0'
+
+    if not id_partida.isdigit():
+        return jsonify({'erro' : 'request.args[id_partida] deve ser numerico'})
+
+    ordem_set = None
+    
+    if request.args.get('ordem_set'):
+        ordem_set = request.args.get('ordem_set')
+        
+    if not ordem_set:
+        ordem_set = '0'
+
+    if not ordem_set.isdigit():
+        return jsonify({'erro' : 'request.args[ordem_set] deve ser numerico'})
+    
+    # Realiza insert no banco de dados
+    datetimenow = datetime.datetime.now()
+    sqlvar = (id_partida, ordem_set, datetimenow, datetimenow)
+
+    bloco = ("insert into set (partida_id, ordem, criado_em, atualizado_em) \
+            VALUES (%s, %s, %s, %s) \
+            returning id, partida_id, ordem ")
+
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco, sqlvar)
+        set_data = cursor.fetchone()
+
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+    # Devolve dados do set recém salvo
+    data_set = {}
+    if set_data:
+        data_set['set_id'] = set_data[0]
+        data_set['partida_id'] = set_data[1]
+        data_set['ordem_set'] = set_data[2]
+
+    return jsonify({'set_criado' : data_set})
+
 
 
 LOGFILE = 'apibadminton.log'   #Log-File-Name

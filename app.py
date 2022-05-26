@@ -727,6 +727,159 @@ def post_set():
     return jsonify({'set_criado' : data_set})
 
 
+@app.route('/post_jogada', methods=['POST'])
+def post_jogada():
+    """ Cria registro de jogada no banco de dados """
+
+    data = request.get_json()
+
+    if not data:
+        return jsonify({'erro' : 'JSON inválido.'})
+
+    schema = {
+        "type": "object",
+        "required": ["set", "golpe", "quadrante", "acerto"],
+        "properties": {
+            "set": {
+                "type": "integer",
+                "minimum": 1,
+                "exclusiveMaximum": 999999999
+            },
+            "golpe": {
+                "type": "integer",
+                "minimum": 1,
+                "exclusiveMaximum": 999999999
+            },
+            "quadrante": {
+                "type": "integer",
+                "minimum": 1,
+                "exclusiveMaximum": 999999999
+            },
+            "acerto": {
+                "type": "boolean",
+            }
+          }
+        }
+
+    #Verifica se Json é valido (conforme Json-schema).
+    try:
+        validate(data, schema)
+
+    except ValidationError as e:
+        mensagem = 'JSON inválido.' + ' - Path: ' + str(e.path)  + ' - Message: ' + str(e.message)
+        return jsonify({'erro' : mensagem})
+    
+    # Realiza insert no banco de dados
+    datetimenow = datetime.datetime.now()
+    set_id = data['set']
+    sqlvar = (set_id, data['golpe'], data['quadrante'], data['acerto'], datetimenow, datetimenow)
+
+    bloco = ("insert into jogada (set_id, golpe_id, quadrante_id, acerto, criado_em, atualizado_em) \
+            VALUES (%s, %s, %s, %s, %s, %s) ")
+
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco, sqlvar)
+
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+    # Pesquisar a quantidade de acertos
+    acerto = True
+
+    sqlvar = (acerto, set_id)
+
+    bloco = (" select count (jogada.acerto) from jogada \
+                where jogada.acerto = %s and jogada.set_id = %s ")
+    
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco, sqlvar)
+        acerto = cursor.fetchone()
+    
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+    # Pesquisar a quantidade de erros
+    erro = False
+
+    sqlvar = (erro, set_id)
+
+    bloco = (" select count (acerto) from jogada \
+                where acerto = %s and jogada.set_id = %s  ")
+    
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco, sqlvar)
+        erro = cursor.fetchone()
+    
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+    # Pesquisar ordem do set
+
+    sqlvar = (set_id,)
+
+    bloco = (" select ordem from set where id = %s  ")
+    
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco, sqlvar)
+        ordem_set = cursor.fetchone()
+    
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+
+    # Devolve pontuação
+    data_pontuacao = {}
+    
+    data_pontuacao['set_id'] = data['set']
+    data_pontuacao['erros'] = erro[0]
+    data_pontuacao['acertos'] = acerto[0]
+    data_pontuacao['ordem_set'] = ordem_set[0]
+
+
+    return jsonify({'pontuacao_set': data_pontuacao})
+
+
+
 
 LOGFILE = 'apibadminton.log'   #Log-File-Name
 LOGFILESIZE = 5000000    #Log-File-Size (bytes)

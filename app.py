@@ -547,8 +547,86 @@ def get_partida():
         if set_ordem_data:
             for set_data in set_ordem_data:
                 set_partida = {}
-                set_partida['id_set'] = set_data[0]
+                id_set = set_data[0]
+                set_partida['id_set'] = id_set
                 set_partida['ordem_set'] = set_data[1]
+
+
+                # Pesquisa as jogadas dos sets da partida
+                erros = False
+
+                sqlvar = (erros, id_set)
+
+                bloco = (" select count (acerto) from jogada where acerto = %s and jogada.set_id = %s  ")
+                
+                try:
+                    connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+                    cursor = connection.cursor()
+                    cursor.execute(bloco, sqlvar)
+                    erros = cursor.fetchone()
+                
+                except (Exception, psycopg2.Error) as error:
+                    erro = str(error).rstrip()
+                    erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+                    return jsonify({'erro' : erro_banco})
+
+                finally:
+                    if (connection):
+                        connection.commit()
+                        cursor.close()
+                        connection.close()
+
+                acertos = True
+
+                sqlvar = (acertos, id_set)
+
+                bloco = (" select count (acerto) from jogada where acerto = %s and jogada.set_id = %s  ")
+                
+                try:
+                    connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+                    cursor = connection.cursor()
+                    cursor.execute(bloco, sqlvar)
+                    acertos = cursor.fetchone()
+                
+                except (Exception, psycopg2.Error) as error:
+                    erro = str(error).rstrip()
+                    erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+                    return jsonify({'erro' : erro_banco})
+
+                finally:
+                    if (connection):
+                        connection.commit()
+                        cursor.close()
+                        connection.close()
+
+                # Devolve pontuação e verifica se o jogo deve continuar ou parar
+                qtd_erros = erros[0]
+                qtd_acertos = acertos[0]
+                diferenca_erro_acerto = abs(qtd_erros - qtd_acertos)
+            
+                if qtd_erros > qtd_acertos:
+                    set_partida['resultado_set'] = 'perdeu'
+                elif qtd_erros < qtd_acertos:
+                    set_partida['resultado_set'] = 'ganhou'
+                else:
+                    set_partida['resultado_set'] = 'empate'
+
+                set_partida['erros'] = qtd_erros
+                set_partida['acertos'] = qtd_acertos
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 
                 output_set.append(set_partida)
 
@@ -866,17 +944,150 @@ def post_jogada():
             cursor.close()
             connection.close()
 
-
-    # Devolve pontuação
+    # Devolve pontuação e verifica se o jogo deve continuar ou parar
     data_pontuacao = {}
     
     data_pontuacao['set_id'] = data['set']
-    data_pontuacao['erros'] = erro[0]
-    data_pontuacao['acertos'] = acerto[0]
     data_pontuacao['ordem_set'] = ordem_set[0]
 
+    qtd_erros = erro[0]
+    qtd_acertos = acerto[0]
+    diferenca_erro_acerto = abs(qtd_erros - qtd_acertos)
+    
+    if qtd_erros > qtd_acertos:
+        data_pontuacao['resultado_set'] = 'perdendo'
+    elif qtd_erros < qtd_acertos:
+        data_pontuacao['resultado_set'] = 'ganhando'
+    else:
+        data_pontuacao['resultado_set'] = 'empatando'
+    
+    data_pontuacao['status'] = 'continuar'
+    if (qtd_erros >= 21 or qtd_acertos >= 21):
+        if diferenca_erro_acerto >= 2:
+            data_pontuacao['status'] = 'parar'
+        else:
+            if (qtd_erros >= 30 or qtd_acertos >= 30):
+                data_pontuacao['status'] = 'parar'
+
+    data_pontuacao['erros'] = qtd_erros
+    data_pontuacao['acertos'] = qtd_acertos
 
     return jsonify({'pontuacao_set': data_pontuacao})
+
+
+@app.route('/get_set', methods=['GET'])
+def get_set():
+    """ Devolve todos os dados de um set e suas jogadas """
+
+    # Verifica parâmetros de entrada
+    id_set = None
+    
+    if request.args.get('id_set'):
+        id_set = request.args.get('id_set')
+        
+    if not id_set:
+        id_set = '0'
+
+    if not id_set.isdigit():
+        return jsonify({'erro' : 'request.args[id_set] deve ser numerico'})
+
+    sqlvar = (id_set, )
+
+    bloco = (" select set.id, set.partida_id, set.ordem from set where set.id = %s ")
+    
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco, sqlvar)
+        data_set = cursor.fetchone()
+    
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+    set_data = {}
+    if data_set:
+        set_data['set_id'] = data_set[0]
+        set_data['partida_id'] = data_set[1]
+        set_data['ordem'] = data_set[2] 
+
+        erros = False
+
+        sqlvar = (erros, id_set)
+
+        bloco = (" select count (acerto) from jogada where acerto = %s and jogada.set_id = %s  ")
+        
+        try:
+            connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+            cursor = connection.cursor()
+            cursor.execute(bloco, sqlvar)
+            erros = cursor.fetchone()
+        
+        except (Exception, psycopg2.Error) as error:
+            erro = str(error).rstrip()
+            erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+            return jsonify({'erro' : erro_banco})
+
+        finally:
+            if (connection):
+                connection.commit()
+                cursor.close()
+                connection.close()
+
+        acertos = True
+
+        sqlvar = (acertos, id_set)
+
+        bloco = (" select count (acerto) from jogada where acerto = %s and jogada.set_id = %s  ")
+        
+        try:
+            connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+            cursor = connection.cursor()
+            cursor.execute(bloco, sqlvar)
+            acertos = cursor.fetchone()
+        
+        except (Exception, psycopg2.Error) as error:
+            erro = str(error).rstrip()
+            erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+            return jsonify({'erro' : erro_banco})
+
+        finally:
+            if (connection):
+                connection.commit()
+                cursor.close()
+                connection.close()
+
+        # Devolve pontuação e verifica se o jogo deve continuar ou parar
+        qtd_erros = erros[0]
+        qtd_acertos = acertos[0]
+        diferenca_erro_acerto = abs(qtd_erros - qtd_acertos)
+       
+        if qtd_erros > qtd_acertos:
+            set_data['resultado_set'] = 'perdeu'
+        elif qtd_erros < qtd_acertos:
+            set_data['resultado_set'] = 'ganhou'
+        else:
+            set_data['resultado_set'] = 'empate'
+
+        set_data['status'] = 'continuar'
+        if (qtd_erros >= 21 or qtd_acertos >= 21):
+            if diferenca_erro_acerto >= 2:
+                set_data['status'] = 'parar'
+            else:
+                if (qtd_erros >= 30 or qtd_acertos >= 30):
+                    set_data['status'] = 'parar'
+
+        set_data['erros'] = qtd_erros
+        set_data['acertos'] = qtd_acertos
+
+    return jsonify({'data_set': set_data})
 
 
 

@@ -150,7 +150,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/get_partida?id_partida=4",
+					"raw": "{{url}}/get_partida?id_partida=3",
 					"host": [
 						"{{url}}"
 					],
@@ -160,11 +160,35 @@
 					"query": [
 						{
 							"key": "id_partida",
-							"value": "4"
+							"value": "3"
 						}
 					]
 				},
-				"description": "**/get_partida**\n\n**Entrada**:\n\n*   id_partida: int\n    \n\n**Saída**: Dados da partidar:\n\n``` json\n{\n    \"partida_badminton\": {\n        \"data\": \"30-05-2022\",\n        \"id\": 4,\n        \"jogador_1\": 3,\n        \"jogador_2\": null,\n        \"jogador_adversario_1\": 2,\n        \"jogador_adversario_2\": null,\n        \"modalidade\": \"misto\",\n        \"partida_nome\": \"Carolina vs Fabiana\",\n        \"sets\": [\n            {\n                \"id_set\": 1,\n                \"ordem_set\": 1\n            },\n            {\n                \"id_set\": 2,\n                \"ordem_set\": 2\n            }\n        ],\n        \"tipo_jogo\": \"simples\"\n    }\n}\n\n```"
+				"description": "**/get_partida**\n\n**Entrada**:\n\n*   id_partida: int\n    \n\n**Saída**: Dados da partidar, os seus sets e os resultados dos sets:\n\n``` json\n{\n    \"partida_badminton\": {\n        \"data\": \"01-05-2022\",\n        \"id\": 3,\n        \"jogador_1\": 2,\n        \"jogador_2\": null,\n        \"jogador_adversario_1\": 1,\n        \"jogador_adversario_2\": null,\n        \"modalidade\": \"misto\",\n        \"partida_nome\": \"Fabiana vs Greysia\",\n        \"sets\": [\n            {\n                \"acertos\": 29,\n                \"erros\": 30,\n                \"id_set\": 6,\n                \"ordem_set\": 1,\n                \"resultado_set\": \"perdeu\"\n            },\n            {\n                \"acertos\": 0,\n                \"erros\": 0,\n                \"id_set\": 7,\n                \"ordem_set\": 1,\n                \"resultado_set\": \"empate\"\n            },\n            {\n                \"acertos\": 0,\n                \"erros\": 0,\n                \"id_set\": 8,\n                \"ordem_set\": 2,\n                \"resultado_set\": \"empate\"\n            },\n            {\n                \"acertos\": 0,\n                \"erros\": 0,\n                \"id_set\": 9,\n                \"ordem_set\": 3,\n                \"resultado_set\": \"empate\"\n            }\n        ],\n        \"tipo_jogo\": \"simples\"\n    }\n}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/get_set",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/get_set?id_set=6",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"get_set"
+					],
+					"query": [
+						{
+							"key": "id_set",
+							"value": "6"
+						}
+					]
+				},
+				"description": "**/get_set**\n\n**Entrada**:\n\n*   id_set: int\n    \n\n**Saída**: Dados do set - quantidade de erros e acertos e status do set:\n\n``` json\n{\n    \"data_set\": {\n        \"acertos\": 29,\n        \"erros\": 30,\n        \"ordem\": 1,\n        \"partida_id\": 3,\n        \"resultado_set\": \"perdeu\",\n        \"set_id\": 6,\n        \"status\": \"parar\"\n    }\n}\n\n```"
 			},
 			"response": []
 		},
@@ -198,7 +222,7 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/post_set?id_partida=4&ordem_set=2",
+					"raw": "{{url}}/post_set?id_partida=4&ordem_set=3",
 					"host": [
 						"{{url}}"
 					],
@@ -212,7 +236,7 @@
 						},
 						{
 							"key": "ordem_set",
-							"value": "2"
+							"value": "3"
 						}
 					]
 				},
@@ -227,7 +251,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"set\": 13,\r\n    \"golpe\": 1,\r\n    \"quadrante\": 1,\r\n    \"acerto\": true\r\n}",
+					"raw": "{\r\n    \"set\": 6,\r\n    \"golpe\": 1,\r\n    \"quadrante\": 1,\r\n    \"acerto\": false\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -243,7 +267,7 @@
 						"post_jogada"
 					]
 				},
-				"description": "**/post_jogada**\n\n**Entrada**:\n\n*   não requer parametro\n    \n\n**Schema**:\n\n``` json\nschema = {\n        \"type\": \"object\",\n        \"required\": [\"set\", \"golpe\", \"quadrante\", \"acerto\"],\n        \"properties\": {\n            \"set\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"golpe\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"quadrante\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"acerto\": {\n                \"type\": \"boolean\",\n            }\n          }\n        }\n\n```\n\n**Saída** :\n\n``` json\n{\n    \"pontuacao_set\": {\n        \"acertos\": 1,\n        \"erros\": 0,\n        \"ordem_set\": 2,\n        \"set_id\": 13\n    }\n}\n\n```"
+				"description": "**/post_jogada**\n\n**Entrada**:\n\n*   não requer parametro\n    \n\n**Schema**:\n\n``` json\nschema = {\n        \"type\": \"object\",\n        \"required\": [\"set\", \"golpe\", \"quadrante\", \"acerto\"],\n        \"properties\": {\n            \"set\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"golpe\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"quadrante\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"acerto\": {\n                \"type\": \"boolean\",\n            }\n          }\n        }\n\n```\n\n**Saída** :\n\n``` json\n{\n    \"pontuacao_set\": {\n        \"acertos\": 29,\n        \"erros\": 30,\n        \"ordem_set\": 1,\n        \"resultado_set\": \"perdendo\",\n        \"set_id\": 6,\n        \"status\": \"parar\"\n    }\n}\n\n```"
 			},
 			"response": []
 		},

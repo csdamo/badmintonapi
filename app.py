@@ -363,14 +363,14 @@ def post_partida():
 
     schema = {
         "type": "object",
-        "required": ["nome", "data_partida", "tipo_jogo", "modalidade", "jogador_1", "jogador_2", "jogador_adversario_1",  "jogador_adversario_2"],
+        "required": ["nome", "data", "tipo_jogo", "modalidade", "jogador_1", "jogador_2", "jogador_adversario_1",  "jogador_adversario_2"],
         "properties": {
              "nome": {
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 200
             },
-            "data_partida": {
+            "data": {
                 "type": "string",
                 "format": "date"
             },
@@ -411,7 +411,7 @@ def post_partida():
 
     # Variáveis com os dados a serem salvos
     nome = data["nome"]
-    data_partida = data["data_partida"]
+    data_partida = data["data"]
     tipo_jogo = data["tipo_jogo"]
     modalidade = data["modalidade"]
     jogador_1 = data["jogador_1"]
@@ -453,8 +453,8 @@ def post_partida():
     # Dados a serem retornados após salvamento do registro
     partida = {}
     if data_partida:
-        partida['partida_id'] = data_partida[0]
-        partida['nome_partida'] = data_partida[1]
+        partida['partida_id'] = data_partida[0].strftime('%d-%m-%Y')
+        partida['nome'] = data_partida[1]
         partida['data'] = data_partida[2]
         partida['tipo_jogo'] = data_partida[3]
         partida['modalidade'] = data_partida[4]
@@ -514,7 +514,7 @@ def get_partida():
         lineout_partida['data'] = partida_data[1].strftime('%d-%m-%Y')
         lineout_partida['tipo_jogo'] = partida_data[2]
         lineout_partida['modalidade'] = partida_data[3]
-        lineout_partida['partida_nome'] = partida_data[4]
+        lineout_partida['nome'] = partida_data[4]
         lineout_partida['jogador_1'] = partida_data[5]
         lineout_partida['jogador_2'] = partida_data[6]
         lineout_partida['jogador_adversario_1'] = partida_data[7]
@@ -613,20 +613,6 @@ def get_partida():
 
                 set_partida['erros'] = qtd_erros
                 set_partida['acertos'] = qtd_acertos
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 
                 output_set.append(set_partida)
 
@@ -699,7 +685,7 @@ def get_partidas():
             lineout_partida['data'] = line[1].strftime('%d-%m-%Y')
             lineout_partida['tipo_jogo'] = line[2]
             lineout_partida['modalidade'] = line[3]
-            lineout_partida['partida_nome'] = line[4]
+            lineout_partida['nome'] = line[4]
             lineout_partida['jogador_1'] = line[5]
             lineout_partida['jogador_2'] = line[6]
             lineout_partida['jogador_adversario_1'] = line[7]

@@ -124,7 +124,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"nome\": \"Greysia vs Fabiana\",\r\n    \"data_partida\": \"2022-05-30\",\r\n    \"tipo_jogo\": \"dupla\",\r\n    \"modalidade\": \"misto\",\r\n    \"jogador_1\": 1,\r\n    \"jogador_2\": 3,\r\n    \"jogador_adversario_1\": 2,\r\n    \"jogador_adversario_2\": 4\r\n}",
+					"raw": "{\r\n    \"nome\": \"Greysia vs Fabiana\",\r\n    \"data\": \"2022-05-30\",\r\n    \"tipo_jogo\": \"dupla\",\r\n    \"modalidade\": \"misto\",\r\n    \"jogador_1\": 1,\r\n    \"jogador_2\": 3,\r\n    \"jogador_adversario_1\": 2,\r\n    \"jogador_adversario_2\": 4\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -140,7 +140,7 @@
 						"post_partida"
 					]
 				},
-				"description": "**/post_partida**\n\n**Entrada**:\n\n*   não requer parametro\n    \n\n**Schema**:\n\n``` json\nschema = {\n        \"type\": \"object\",\n        \"required\": [\"nome\", \"data_partida\", \"tipo_jogo\", \"modalidade\", \"jogador_1\", \"jogador_2\", \"jogador_adversario_1\",  \"jogador_adversario_2\"],\n        \"properties\": {\n             \"nome\": {\n                \"type\": \"string\",\n                \"minLength\": 1,\n                \"maxLength\": 200\n            },\n            \"data_partida\": {\n                \"type\": \"string\",\n                \"format\": \"date\"\n            },\n            \"tipo_jogo\": {\n                \"type\": \"string\",\n                 \"enum\": [\"simples\", \"dupla\"]\n            },\n            \"modalidade\": {\n                \"type\": \"string\",\n                \"enum\": [\"misto\", \"feminino\", \"masculino\"]\n            },\n            \"jogador_1\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"jogador_2\": {\n                \"type\": \"integer\",\n            },\n            \"jogador_adversario_1\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"jogador_adversario_2\": {\n                \"type\": \"integer\",\n            }\n          }\n        }\n\n```\n\n**Saída** :\n\n``` json\n{\n    \"partida\": {\n        \"data\": \"Mon, 30 May 2022 00:00:00 GMT\",\n        \"jogador_1_id\": 1,\n        \"jogador_2_id\": 3,\n        \"jogador_adversario_1_id\": 2,\n        \"jogador_adversario_2_id\": 4,\n        \"modalidade\": \"misto\",\n        \"nome_partida\": \"Greysia vs Fabiana\",\n        \"partida_id\": 13,\n        \"tipo_jogo\": \"dupla\"\n    }\n}\n\n```"
+				"description": "**/post_partida**\n\n**Entrada**:\n\n*   não requer parametro\n    \n\n**Schema**:\n\n``` json\nschema = {\n        \"type\": \"object\",\n        \"required\": [\"nome\", \"data\", \"tipo_jogo\", \"modalidade\", \"jogador_1\", \"jogador_2\", \"jogador_adversario_1\",  \"jogador_adversario_2\"],\n        \"properties\": {\n             \"nome\": {\n                \"type\": \"string\",\n                \"minLength\": 1,\n                \"maxLength\": 200\n            },\n            \"data\": {\n                \"type\": \"string\",\n                \"format\": \"date\"\n            },\n            \"tipo_jogo\": {\n                \"type\": \"string\",\n                 \"enum\": [\"simples\", \"dupla\"]\n            },\n            \"modalidade\": {\n                \"type\": \"string\",\n                \"enum\": [\"misto\", \"feminino\", \"masculino\"]\n            },\n            \"jogador_1\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"jogador_2\": {\n                \"type\": \"integer\",\n            },\n            \"jogador_adversario_1\": {\n                \"type\": \"integer\",\n                \"minimum\": 1,\n                \"exclusiveMaximum\": 999999999\n            },\n            \"jogador_adversario_2\": {\n                \"type\": \"integer\",\n            }\n          }\n        }\n\n```\n\n**Saída** :\n\n``` json\n{\n    \"partida\": {\n        \"data\": \"Mon, 30 May 2022 00:00:00 GMT\",\n        \"jogador_1_id\": 1,\n        \"jogador_2_id\": 3,\n        \"jogador_adversario_1_id\": 2,\n        \"jogador_adversario_2_id\": 4,\n        \"modalidade\": \"misto\",\n        \"nome\": \"Greysia vs Fabiana\",\n        \"partida_id\": 13,\n        \"tipo_jogo\": \"dupla\"\n    }\n}\n\n```"
 			},
 			"response": []
 		},
@@ -169,36 +169,12 @@
 			"response": []
 		},
 		{
-			"name": "/get_set",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{url}}/get_set?id_set=6",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"get_set"
-					],
-					"query": [
-						{
-							"key": "id_set",
-							"value": "6"
-						}
-					]
-				},
-				"description": "**/get_set**\n\n**Entrada**:\n\n*   id_set: int\n    \n\n**Saída**: Dados do set - quantidade de erros e acertos e status do set:\n\n``` json\n{\n    \"data_set\": {\n        \"acertos\": 29,\n        \"erros\": 30,\n        \"ordem\": 1,\n        \"partida_id\": 3,\n        \"resultado_set\": \"perdeu\",\n        \"set_id\": 6,\n        \"status\": \"parar\"\n    }\n}\n\n```"
-			},
-			"response": []
-		},
-		{
 			"name": "/get_partidas",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/get_partidas?lista_id_partida=4, 5, 8",
+					"raw": "{{url}}/get_partidas?lista_id_partida=",
 					"host": [
 						"{{url}}"
 					],
@@ -208,11 +184,11 @@
 					"query": [
 						{
 							"key": "lista_id_partida",
-							"value": "4, 5, 8"
+							"value": ""
 						}
 					]
 				},
-				"description": "**/get_partidas**\n\n**Entrada**:\n\n*   lista_id_partida: lista de ids de partida - se vazio devolve todas as partidas\n    \n      \n      \n    \n\n**Saída**: lista de \"partidas\":\n\n``` json\n{\n    \"partidas_badminton\": [\n        {\n            \"data\": \"30-05-2022\",\n            \"id\": 4,\n            \"jogador_1\": 3,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 2,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"partida_nome\": \"Carolina vs Fabiana\",\n            \"sets\": [\n                {\n                    \"id_set\": 1,\n                    \"ordem_set\": 1\n                },\n                {\n                    \"id_set\": 2,\n                    \"ordem_set\": 2\n                }\n            ],\n            \"tipo_jogo\": \"simples\"\n        },\n        {\n            \"data\": \"30-05-2022\",\n            \"id\": 5,\n            \"jogador_1\": 1,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 3,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"partida_nome\": \"Greysia vs Carolina\",\n            \"sets\": [],\n            \"tipo_jogo\": \"simples\"\n        },\n        {\n            \"data\": \"30-05-2022\",\n            \"id\": 8,\n            \"jogador_1\": 1,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 2,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"partida_nome\": \"Greysia vs Fabiana\",\n            \"sets\": [\n                {\n                    \"id_set\": 3,\n                    \"ordem_set\": 1\n                }\n            ],\n            \"tipo_jogo\": \"simples\"\n        }\n    ]\n}\n\n```"
+				"description": "**/get_partidas**\n\n**Entrada**:\n\n*   lista_id_partida: lista de ids de partida - se vazio devolve todas as partidas\n    \n\n**Saída**: lista de \"partidas\":\n\n``` json\n{\n    \"partidas_badminton\": [\n        {\n            \"data\": \"30-05-2022\",\n            \"id\": 4,\n            \"jogador_1\": 3,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 2,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"nome\": \"Carolina vs Fabiana\",\n            \"sets\": [\n                {\n                    \"id_set\": 1,\n                    \"ordem_set\": 1\n                },\n                {\n                    \"id_set\": 2,\n                    \"ordem_set\": 2\n                }\n            ],\n            \"tipo_jogo\": \"simples\"\n        },\n        {\n            \"data\": \"30-05-2022\",\n            \"id\": 5,\n            \"jogador_1\": 1,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 3,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"nome\": \"Greysia vs Carolina\",\n            \"sets\": [],\n            \"tipo_jogo\": \"simples\"\n        },\n        {\n            \"data\": \"30-05-2022\",\n            \"id\": 8,\n            \"jogador_1\": 1,\n            \"jogador_2\": null,\n            \"jogador_adversario_1\": 2,\n            \"jogador_adversario_2\": null,\n            \"modalidade\": \"misto\",\n            \"partida_nome\": \"Greysia vs Fabiana\",\n            \"sets\": [\n                {\n                    \"id_set\": 3,\n                    \"ordem_set\": 1\n                }\n            ],\n            \"tipo_jogo\": \"simples\"\n        }\n    ]\n}\n\n```"
 			},
 			"response": []
 		},
@@ -222,7 +198,7 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/post_set?id_partida=4&ordem_set=3",
+					"raw": "{{url}}/post_set?id_partida=3&ordem_set=2",
 					"host": [
 						"{{url}}"
 					],
@@ -232,15 +208,39 @@
 					"query": [
 						{
 							"key": "id_partida",
-							"value": "4"
+							"value": "3"
 						},
 						{
 							"key": "ordem_set",
-							"value": "3"
+							"value": "2"
 						}
 					]
 				},
 				"description": "**/post_set**\n\n**Entrada**:\n\n*   id_partida: int\n*   ordem_set: int\n    \n\n**Saída**: Dados do set:\n\n``` json\n{\n    \"set_criado\": {\n        \"ordem_set\": 1,\n        \"partida_id\": 4,\n        \"set_id\": 10\n    }\n}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/get_set",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/get_set?id_set=17",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"get_set"
+					],
+					"query": [
+						{
+							"key": "id_set",
+							"value": "17"
+						}
+					]
+				},
+				"description": "**/get_set**\n\n**Entrada**:\n\n*   id_set: int\n    \n\n**Saída**: Dados do set - quantidade de erros e acertos e status do set:\n\n``` json\n{\n    \"data_set\": {\n        \"acertos\": 29,\n        \"erros\": 30,\n        \"ordem\": 1,\n        \"partida_id\": 3,\n        \"resultado_set\": \"perdeu\",\n        \"set_id\": 6,\n        \"status\": \"parar\"\n    }\n}\n\n```"
 			},
 			"response": []
 		},
@@ -251,7 +251,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"set\": 6,\r\n    \"golpe\": 1,\r\n    \"quadrante\": 1,\r\n    \"acerto\": false\r\n}",
+					"raw": "{\r\n    \"set\": 17,\r\n    \"golpe\": 1,\r\n    \"quadrante\": 2,\r\n    \"acerto\": false\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

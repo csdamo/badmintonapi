@@ -453,9 +453,9 @@ def post_partida():
     # Dados a serem retornados após salvamento do registro
     partida = {}
     if data_partida:
-        partida['partida_id'] = data_partida[0].strftime('%d-%m-%Y')
+        partida['partida_id'] = data_partida[0]
         partida['nome'] = data_partida[1]
-        partida['data'] = data_partida[2]
+        partida['data'] = (data_partida[2]).strftime('%d-%m-%Y')
         partida['tipo_jogo'] = data_partida[3]
         partida['modalidade'] = data_partida[4]
         partida['jogador_1_id'] = data_partida[5]

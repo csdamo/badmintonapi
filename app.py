@@ -506,6 +506,30 @@ def get_partida():
             cursor.close()
             connection.close()
 
+    if partida_data:
+        # Pesquisa jogadores
+        bloco = " select jogador.nome_jogador, jogador.id  \
+                from jogador where id = %s or id = %s  or id = %s  or id = %s " 
+                    
+        tupla = (partida_data[5], partida_data[6], partida_data[7], partida_data[8])
+
+        try:
+            connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+            cursor = connection.cursor()
+            cursor.execute(bloco, tupla)
+            jogador_data = cursor.fetchall()
+
+        except (Exception, psycopg2.Error) as error:
+            erro = str(error).rstrip()
+            erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+            return jsonify({'erro' : erro_banco})
+
+        finally:
+            if (connection):
+                cursor.close()
+                connection.close()
+
+
     # Devolve dados da partida pesquisado
     lineout_partida = {}
     if partida_data:
@@ -515,10 +539,35 @@ def get_partida():
         lineout_partida['tipo_jogo'] = partida_data[2]
         lineout_partida['modalidade'] = partida_data[3]
         lineout_partida['nome'] = partida_data[4]
-        lineout_partida['jogador_1'] = partida_data[5]
-        lineout_partida['jogador_2'] = partida_data[6]
-        lineout_partida['jogador_adversario_1'] = partida_data[7]
-        lineout_partida['jogador_adversario_2'] = partida_data[8]
+        lineout_partida['jogador_1'] = {
+            'nome': (jogador_data[0])[0],
+            'id': (jogador_data[0])[1],
+        }
+
+        if (len(jogador_data)) == 4:
+            pass
+            
+            lineout_partida['jogador_2'] = {
+                'nome': (jogador_data[1])[0],
+                'id': (jogador_data[1])[1],
+            }
+            lineout_partida['jogador_adversario_1'] = {
+                'nome': (jogador_data[2])[0],
+                'id': (jogador_data[2])[1],
+                }
+            lineout_partida['jogador_adversario_2'] = {
+                'nome': (jogador_data[3])[0],
+                'id': (jogador_data[3])[1],
+            }
+        
+        elif (len(jogador_data)) == 2:
+            lineout_partida['jogador_2'] = {}
+            lineout_partida['jogador_adversario_1'] = {
+                'nome': (jogador_data[1])[0],
+                'id': (jogador_data[1])[1],
+
+            }
+            lineout_partida['jogador_adversario_2'] = {}
 
         # Pesquisa os sets da partida
         bloco = " select set.id, set.ordem from set where set.partida_id = %s "
@@ -553,17 +602,15 @@ def get_partida():
 
 
                 # Pesquisa as jogadas dos sets da partida
-                erros = False
+                sqlvar = (id_set,)
 
-                sqlvar = (erros, id_set)
-
-                bloco = (" select count (acerto) from jogada where acerto = %s and jogada.set_id = %s  ")
+                bloco = (" select count(acerto), acerto from jogada where set_id =%s  group by acerto; ")
                 
                 try:
                     connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
                     cursor = connection.cursor()
                     cursor.execute(bloco, sqlvar)
-                    erros = cursor.fetchone()
+                    acertos = cursor.fetchall()
                 
                 except (Exception, psycopg2.Error) as error:
                     erro = str(error).rstrip()
@@ -575,33 +622,33 @@ def get_partida():
                         connection.commit()
                         cursor.close()
                         connection.close()
-
-                acertos = True
-
-                sqlvar = (acertos, id_set)
-
-                bloco = (" select count (acerto) from jogada where acerto = %s and jogada.set_id = %s  ")
-                
-                try:
-                    connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
-                    cursor = connection.cursor()
-                    cursor.execute(bloco, sqlvar)
-                    acertos = cursor.fetchone()
-                
-                except (Exception, psycopg2.Error) as error:
-                    erro = str(error).rstrip()
-                    erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
-                    return jsonify({'erro' : erro_banco})
-
-                finally:
-                    if (connection):
-                        connection.commit()
-                        cursor.close()
-                        connection.close()
-
+                print(acertos)
                 # Devolve pontuação e verifica se o jogo deve continuar ou parar
-                qtd_erros = erros[0]
-                qtd_acertos = acertos[0]
+                
+                if acertos:
+                    quantidade_resultado1 =  (acertos[0])[0]
+                    tipo_resultado1 = (acertos[0])[1]
+
+                    if tipo_resultado1:
+                        qtd_acertos = quantidade_resultado1
+                        qtd_erros = 0
+                    else:
+                        qtd_erros = quantidade_resultado1
+                        qtd_acertos = 0
+
+                    
+                    if len(acertos) == 2:
+                        quantidade_resultado2 =  (acertos[1])[0]
+                        tipo_resultado2 = (acertos[1])[1]
+                        if tipo_resultado2:
+                            qtd_acertos = quantidade_resultado2
+                        else:
+                            qtd_erros = quantidade_resultado2
+
+                else:
+                    qtd_erros = 0
+                    qtd_acertos = 0
+                            
                 diferenca_erro_acerto = abs(qtd_erros - qtd_acertos)
             
                 if qtd_erros > qtd_acertos:
@@ -610,6 +657,14 @@ def get_partida():
                     set_partida['resultado_set'] = 'ganhou'
                 else:
                     set_partida['resultado_set'] = 'empate'
+
+                set_partida['status'] = 'continuar'
+                if (qtd_erros >= 21 or qtd_acertos >= 21):
+                    if diferenca_erro_acerto >= 2:
+                        set_partida['status'] = 'parar'
+                    else:
+                        if (qtd_erros >= 30 or qtd_acertos >= 30):
+                            set_partida['status'] = 'parar'
 
                 set_partida['erros'] = qtd_erros
                 set_partida['acertos'] = qtd_acertos
@@ -642,7 +697,7 @@ def get_partidas():
     posicao = 0
     blocoi = " select partida.id, partida.data_partida, partida.tipo_jogo, partida.modalidade, partida.nome, \
                 partida.jogador_1_id, partida.jogador_2_id, partida.jogador_adversario_1_id, partida.jogador_adversario_2_id \
-                from partida "
+                  from partida " 
                 
     blocof = ""
     tupla = ()
@@ -679,6 +734,32 @@ def get_partidas():
     output_partidas = []
     if partidas_data:
         for line in partidas_data:
+
+            # Pesquisa dados do jogador
+            #bloco = " select jogador.nome_jogador, jogador.id, jogador.data_nascimento, jogador.telefone, \
+            #            jogador.email, jogador.lateralidade \
+            #        from jogador where id = %s or id = %s  or id = %s  or id = %s    " 
+          
+            # Pesquisa dados do jogador
+            bloco = " select jogador.nome_jogador, jogador.id  \
+                    from jogador where id = %s or id = %s  or id = %s  or id = %s " 
+                        
+            tupla = (line[5], line[6], line[7], line[8])
+            try:
+                connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+                cursor = connection.cursor()
+                cursor.execute(bloco, tupla)
+                jogador_data = cursor.fetchall()
+
+            except (Exception, psycopg2.Error) as error:
+                erro = str(error).rstrip()
+                erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+                return jsonify({'erro' : erro_banco})
+
+            finally:
+                if (connection):
+                    cursor.close()
+                    connection.close()
             lineout_partida = {}
             id_partida = line[0]
             lineout_partida['id'] = line[0]
@@ -686,10 +767,60 @@ def get_partidas():
             lineout_partida['tipo_jogo'] = line[2]
             lineout_partida['modalidade'] = line[3]
             lineout_partida['nome'] = line[4]
-            lineout_partida['jogador_1'] = line[5]
-            lineout_partida['jogador_2'] = line[6]
-            lineout_partida['jogador_adversario_1'] = line[7]
-            lineout_partida['jogador_adversario_2'] = line[8]
+            lineout_partida['jogador_1'] = {
+                'nome': (jogador_data[0])[0],
+                'id': (jogador_data[0])[1],
+                #'data_nascimento': (jogador_data[0])[2],
+                #'telefone': (jogador_data[0])[3],
+                #'email': (jogador_data[0])[4],
+                #'lateralidade': (jogador_data[0])[5],
+            }
+
+            if (len(jogador_data)) == 4:
+                
+                lineout_partida['jogador_2'] = {
+                    'nome': (jogador_data[1])[0],
+                    'id': (jogador_data[1])[1],
+                    #'data_nascimento': (jogador_data[1])[2],
+                    #'telefone': (jogador_data[1])[3],
+                    #'email': (jogador_data[1])[4],
+                    #'lateralidade': (jogador_data[1])[5],
+                }
+                lineout_partida['jogador_adversario_1'] = {
+                    'nome': (jogador_data[2])[0],
+                    'id': (jogador_data[2])[1],
+                    #'data_nascimento': (jogador_data[2])[2],
+                    #'telefone': (jogador_data[2])[3],
+                    #'email': (jogador_data[2])[4],
+                    #'lateralidade': (jogador_data[2])[5],
+                    }
+                lineout_partida['jogador_adversario_2'] = {
+                    'nome': (jogador_data[3])[0],
+                    'id': (jogador_data[3])[1],
+                    #'data_nascimento': (jogador_data[3])[2],
+                    #'telefone': (jogador_data[3])[3],
+                    #'email': (jogador_data[3])[4],
+                    #'lateralidade': (jogador_data[3])[5],
+                }
+            
+            elif (len(jogador_data)) == 2:
+                lineout_partida['jogador_2'] = {}
+                lineout_partida['jogador_adversario_1'] = {
+                    'nome': (jogador_data[1])[0],
+                    'id': (jogador_data[1])[1],
+                    #'data_nascimento': (jogador_data[1])[2],
+                    #'telefone': (jogador_data[1])[3],
+                    #'email': (jogador_data[1])[4],
+                    #'lateralidade': (jogador_data[1])[5],
+                }
+                lineout_partida['jogador_adversario_2'] = {}
+                
+
+
+            # lineout_partida['jogador_1'] = line[5]
+            # lineout_partida['jogador_2'] = line[6]
+            # lineout_partida['jogador_adversario_1'] = line[7]
+            # lineout_partida['jogador_adversario_2'] = line[8]
 
             # Pesquisa os sets da partida
             bloco = " select set.id, set.ordem from set where set.partida_id = %s "
@@ -718,8 +849,78 @@ def get_partidas():
             if set_ordem_data:
                 for set_data in set_ordem_data:
                     set_partida = {}
+                    id_set = set_data[0]
                     set_partida['id_set'] = set_data[0]
                     set_partida['ordem_set'] = set_data[1]
+
+            
+                    # Pesquisa as jogadas dos sets da partida
+                    sqlvar = (id_set,)
+
+                    bloco = (" select count(acerto), acerto from jogada where set_id =%s  group by acerto; ")
+                    
+                    try:
+                        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+                        cursor = connection.cursor()
+                        cursor.execute(bloco, sqlvar)
+                        acertos = cursor.fetchall()
+                    
+                    except (Exception, psycopg2.Error) as error:
+                        erro = str(error).rstrip()
+                        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+                        return jsonify({'erro' : erro_banco})
+
+                    finally:
+                        if (connection):
+                            connection.commit()
+                            cursor.close()
+                            connection.close()
+                    print(acertos)
+                    # Devolve pontuação e verifica se o jogo deve continuar ou parar
+                    
+                    if acertos:
+                        quantidade_resultado1 =  (acertos[0])[0]
+                        tipo_resultado1 = (acertos[0])[1]
+
+                        if tipo_resultado1:
+                            qtd_acertos = quantidade_resultado1
+                            qtd_erros = 0
+                        else:
+                            qtd_erros = quantidade_resultado1
+                            qtd_acertos = 0
+
+                        
+                        if len(acertos) == 2:
+                            quantidade_resultado2 =  (acertos[1])[0]
+                            tipo_resultado2 = (acertos[1])[1]
+                            if tipo_resultado2:
+                                qtd_acertos = quantidade_resultado2
+                            else:
+                                qtd_erros = quantidade_resultado2
+    
+                    else:
+                        qtd_erros = 0
+                        qtd_acertos = 0
+                    diferenca_erro_acerto = abs(qtd_erros - qtd_acertos)
+                
+                    if qtd_erros > qtd_acertos:
+                        set_partida['resultado_set'] = 'perdeu'
+                    elif qtd_erros < qtd_acertos:
+                        set_partida['resultado_set'] = 'ganhou'
+                    else:
+                        set_partida['resultado_set'] = 'empate'
+
+                    set_partida['status'] = 'continuar'
+                    if (qtd_erros >= 21 or qtd_acertos >= 21):
+                        if diferenca_erro_acerto >= 2:
+                            set_partida['status'] = 'parar'
+                        else:
+                            if (qtd_erros >= 30 or qtd_acertos >= 30):
+                                set_partida['status'] = 'parar'
+
+                    set_partida['erros'] = qtd_erros
+                    set_partida['acertos'] = qtd_acertos
+                    
                     
                     output_set.append(set_partida)
 
@@ -857,19 +1058,16 @@ def post_jogada():
             cursor.close()
             connection.close()
 
-    # Pesquisar a quantidade de acertos
-    acerto = True
+    # Pesquisa as jogadas dos sets da partida
+    sqlvar = (set_id,)
 
-    sqlvar = (acerto, set_id)
-
-    bloco = (" select count (jogada.acerto) from jogada \
-                where jogada.acerto = %s and jogada.set_id = %s ")
+    bloco = (" select count(acerto), acerto from jogada where set_id =%s  group by acerto; ")
     
     try:
         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
         cursor = connection.cursor()
         cursor.execute(bloco, sqlvar)
-        acerto = cursor.fetchone()
+        acertos = cursor.fetchall()
     
     except (Exception, psycopg2.Error) as error:
         erro = str(error).rstrip()
@@ -881,31 +1079,30 @@ def post_jogada():
             connection.commit()
             cursor.close()
             connection.close()
+    # Devolve pontuação e verifica se o jogo deve continuar ou parar
+    if acertos:
+        quantidade_resultado1 =  (acertos[0])[0]
+        tipo_resultado1 = (acertos[0])[1]
 
-    # Pesquisar a quantidade de erros
-    erro = False
+        if tipo_resultado1:
+            qtd_acertos = quantidade_resultado1
+            qtd_erros = 0
+        else:
+            qtd_erros = quantidade_resultado1
+            qtd_acertos = 0
 
-    sqlvar = (erro, set_id)
+        
+        if len(acertos) == 2:
+            quantidade_resultado2 =  (acertos[1])[0]
+            tipo_resultado2 = (acertos[1])[1]
+            if tipo_resultado2:
+                qtd_acertos = quantidade_resultado2
+            else:
+                qtd_erros = quantidade_resultado2
 
-    bloco = (" select count (acerto) from jogada \
-                where acerto = %s and jogada.set_id = %s  ")
-    
-    try:
-        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
-        cursor = connection.cursor()
-        cursor.execute(bloco, sqlvar)
-        erro = cursor.fetchone()
-    
-    except (Exception, psycopg2.Error) as error:
-        erro = str(error).rstrip()
-        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
-        return jsonify({'erro' : erro_banco})
-
-    finally:
-        if (connection):
-            connection.commit()
-            cursor.close()
-            connection.close()
+    else:
+        qtd_erros = 0
+        qtd_acertos = 0
 
     # Pesquisar ordem do set
 
@@ -936,8 +1133,7 @@ def post_jogada():
     data_pontuacao['set_id'] = data['set']
     data_pontuacao['ordem_set'] = ordem_set[0]
 
-    qtd_erros = erro[0]
-    qtd_acertos = acerto[0]
+
     diferenca_erro_acerto = abs(qtd_erros - qtd_acertos)
     
     if qtd_erros > qtd_acertos:
@@ -1000,21 +1196,22 @@ def get_set():
 
     set_data = {}
     if data_set:
+        set_id = data_set[0]
         set_data['set_id'] = data_set[0]
         set_data['partida_id'] = data_set[1]
         set_data['ordem'] = data_set[2] 
 
-        erros = False
+        
+        # Pesquisa as jogadas dos sets da partida
+        sqlvar = (set_id,)
 
-        sqlvar = (erros, id_set)
-
-        bloco = (" select count (acerto) from jogada where acerto = %s and jogada.set_id = %s  ")
+        bloco = (" select count(acerto), acerto from jogada where set_id =%s  group by acerto; ")
         
         try:
             connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
             cursor = connection.cursor()
             cursor.execute(bloco, sqlvar)
-            erros = cursor.fetchone()
+            acertos = cursor.fetchall()
         
         except (Exception, psycopg2.Error) as error:
             erro = str(error).rstrip()
@@ -1026,33 +1223,30 @@ def get_set():
                 connection.commit()
                 cursor.close()
                 connection.close()
-
-        acertos = True
-
-        sqlvar = (acertos, id_set)
-
-        bloco = (" select count (acerto) from jogada where acerto = %s and jogada.set_id = %s  ")
-        
-        try:
-            connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
-            cursor = connection.cursor()
-            cursor.execute(bloco, sqlvar)
-            acertos = cursor.fetchone()
-        
-        except (Exception, psycopg2.Error) as error:
-            erro = str(error).rstrip()
-            erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
-            return jsonify({'erro' : erro_banco})
-
-        finally:
-            if (connection):
-                connection.commit()
-                cursor.close()
-                connection.close()
-
         # Devolve pontuação e verifica se o jogo deve continuar ou parar
-        qtd_erros = erros[0]
-        qtd_acertos = acertos[0]
+        if acertos:
+            quantidade_resultado1 =  (acertos[0])[0]
+            tipo_resultado1 = (acertos[0])[1]
+
+            if tipo_resultado1:
+                qtd_acertos = quantidade_resultado1
+                qtd_erros = 0
+            else:
+                qtd_erros = quantidade_resultado1
+                qtd_acertos = 0
+
+            if len(acertos) == 2:
+                quantidade_resultado2 =  (acertos[1])[0]
+                tipo_resultado2 = (acertos[1])[1]
+                if tipo_resultado2:
+                    qtd_acertos = quantidade_resultado2
+                else:
+                    qtd_erros = quantidade_resultado2
+
+        else:
+            qtd_erros = 0
+            qtd_acertos = 0
+
         diferenca_erro_acerto = abs(qtd_erros - qtd_acertos)
        
         if qtd_erros > qtd_acertos:
@@ -1074,6 +1268,88 @@ def get_set():
         set_data['acertos'] = qtd_acertos
 
     return jsonify({'data_set': set_data})
+
+
+
+
+
+
+
+
+@app.route('/get_jogada', methods=['GET'])
+def get_jogada():
+    """ Devolve todos os dados de um set e suas jogadas """
+
+    # Verifica parâmetros de entrada
+    id_set = None
+    
+    if request.args.get('id_set'):
+        id_set = request.args.get('id_set')
+        
+    if not id_set:
+        id_set = '0'
+
+    if not id_set.isdigit():
+        return jsonify({'erro' : 'request.args[id_set] deve ser numerico'})
+
+    sqlvar = (id_set, )
+
+    bloco = (" select set.id, set.partida_id, set.ordem from set where set.id = %s ")
+    
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco, sqlvar)
+        data_set = cursor.fetchone()
+    
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+    set_data = {}
+    if data_set:
+        set_data['set_id'] = data_set[0]
+        set_data['partida_id'] = data_set[1]
+        set_data['ordem'] = data_set[2] 
+
+        sqlvar = (id_set,)
+
+        bloco = (" select acerto, count (acerto) from jogada where jogada.set_id = %s group by acerto ")
+        
+        try:
+            connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+            cursor = connection.cursor()
+            cursor.execute(bloco, sqlvar)
+            data_acerto = cursor.fetchall()
+        
+        except (Exception, psycopg2.Error) as error:
+            erro = str(error).rstrip()
+            erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+            return jsonify({'erro' : erro_banco})
+
+        finally:
+            if (connection):
+                connection.commit()
+                cursor.close()
+                connection.close()
+
+        output = []
+        if data_acerto:
+            acertos = {}
+            for line in data_acerto:
+                acertos['quantidade'] = line[0]
+                acertos['acerto'] = line[1]
+                output.append(acertos)
+
+    return jsonify({'data_set': output})
+
 
 
 

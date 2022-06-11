@@ -74,8 +74,33 @@ def post_jogador():
         mensagem = 'JSON inválido.' + ' - Path: ' + str(e.path)  + ' - Message: ' + str(e.message)
         return jsonify({'erro' : mensagem})
 
-    # variáveis com os dados a serem salvos
+    # verifica se nome já está cadastrado
     nome = data["nome"]
+
+    bloco = " select jogador.id, jogador.nome_jogador from jogador where jogador.nome_jogador = %s"
+    sqlvar = (nome,)
+                
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco, sqlvar)
+        jogador_data = cursor.fetchone()
+
+        if jogador_data:
+            return jsonify({'mensagem' : 'Jogador já cadastrado'})
+
+
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    # variáveis com os dados a serem salvos
     data_nascimento = data["data_nascimento"]
     telefone = data["telefone"]
     email = data["email"]
@@ -283,7 +308,7 @@ def upload_file():
 def get_golpes():
     """ Devolve lista de golpes de badminton """
     
-    # Pesquisa tods os golpes de badminton cadastrados
+    # Pesquisa todos os golpes de badminton cadastrados
     bloco = " select golpe.id, golpe.descricao_golpe from golpe "
                 
     try:
@@ -302,6 +327,7 @@ def get_golpes():
             cursor.close()
             connection.close()
     # Devolve lista com dados dos golpes de badminton
+    output = {}
     output_golpe = []
     if golpe_data:
         for line in golpe_data:
@@ -311,7 +337,72 @@ def get_golpes():
         
             output_golpe.append(lineout_golpe)
 
-    return jsonify({'golpes_badminton' : output_golpe})
+    output['golpes'] = output_golpe
+    # Pesquisa tipos de erros de golpe
+    bloco = " select tipoerro.id, tipoerro.descricao_erro from tipoerro "
+                
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco)
+        erro_data = cursor.fetchall()
+
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    # Devolve lista com tipos de erros de golpe
+    output_erro = []
+    if erro_data:
+        for line in erro_data:
+            lineout_erro = {}
+            lineout_erro['id_erro'] = line[0]
+            lineout_erro['descricao'] = line[1]
+        
+            output_erro.append(lineout_erro)
+    output['tipo_erros'] = output_erro
+    return jsonify({'golpes_badminton' : output})
+
+
+@app.route('/get_tipoerro', methods=['GET'])
+def get_tipoerro():
+    """ Devolve lista de erros de golpe """
+    
+    # Pesquisa tipos de erros de golpe
+    bloco = " select tipoerro.id, tipoerro.descricao_erro from tipoerro "
+                
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco)
+        erro_data = cursor.fetchall()
+
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    # Devolve lista com tipos de erros de golpe
+    output_erro = []
+    if erro_data:
+        for line in erro_data:
+            lineout_erro = {}
+            lineout_erro['id_erro'] = line[0]
+            lineout_erro['descricao'] = line[1]
+        
+            output_erro.append(lineout_erro)
+    return jsonify({'tipo_erros' : output_erro})
 
 
 @app.route('/get_quadrantes', methods=['GET'])
@@ -483,7 +574,7 @@ def get_partida():
         return jsonify({'erro' : 'request.args[id_partida] deve ser numerico'})
 
 
-    # Pesquisa jogador conforme id informado no parâmetro
+    # Pesquisa partida conforme id informado no parâmetro
     bloco = " select partida.id, partida.data_partida, partida.tipo_jogo, partida.modalidade, partida.nome, \
                 partida.jogador_1_id, partida.jogador_2_id, partida.jogador_adversario_1_id, partida.jogador_adversario_2_id \
                 from partida where partida.id = %s"
@@ -507,7 +598,7 @@ def get_partida():
             connection.close()
 
     if partida_data:
-        # Pesquisa jogadores
+        # Pesquisa jogadores da partida
         bloco = " select jogador.nome_jogador, jogador.id  \
                 from jogador where id = %s or id = %s  or id = %s  or id = %s " 
                     
@@ -530,7 +621,7 @@ def get_partida():
                 connection.close()
 
 
-    # Devolve dados da partida pesquisado
+    # Devolve dados da partida pesquisada
     lineout_partida = {}
     if partida_data:
         id_partida = partida_data[0] 
@@ -539,6 +630,8 @@ def get_partida():
         lineout_partida['tipo_jogo'] = partida_data[2]
         lineout_partida['modalidade'] = partida_data[3]
         lineout_partida['nome'] = partida_data[4]
+        
+        # Insere dados do jogador: uma partida pode ter dois ou quatro jogadores
         lineout_partida['jogador_1'] = {
             'nome': (jogador_data[0])[0],
             'id': (jogador_data[0])[1],
@@ -622,9 +715,8 @@ def get_partida():
                         connection.commit()
                         cursor.close()
                         connection.close()
-                print(acertos)
+
                 # Devolve pontuação e verifica se o jogo deve continuar ou parar
-                
                 if acertos:
                     quantidade_resultado1 =  (acertos[0])[0]
                     tipo_resultado1 = (acertos[0])[1]
@@ -636,7 +728,6 @@ def get_partida():
                         qtd_erros = quantidade_resultado1
                         qtd_acertos = 0
 
-                    
                     if len(acertos) == 2:
                         quantidade_resultado2 =  (acertos[1])[0]
                         tipo_resultado2 = (acertos[1])[1]
@@ -693,7 +784,7 @@ def get_partidas():
     if not lista_id_partida:
         lista_id_partida = '0'
     
-    # Pesquisa jogador conforme id informado no parâmetro
+    # Pesquisa partidas conforme ids informado no parâmetro
     posicao = 0
     blocoi = " select partida.id, partida.data_partida, partida.tipo_jogo, partida.modalidade, partida.nome, \
                 partida.jogador_1_id, partida.jogador_2_id, partida.jogador_adversario_1_id, partida.jogador_adversario_2_id \
@@ -767,6 +858,8 @@ def get_partidas():
             lineout_partida['tipo_jogo'] = line[2]
             lineout_partida['modalidade'] = line[3]
             lineout_partida['nome'] = line[4]
+
+            # Insere dados do jogador: uma partida pode ter dois ou quatro jogadores
             lineout_partida['jogador_1'] = {
                 'nome': (jogador_data[0])[0],
                 'id': (jogador_data[0])[1],
@@ -815,8 +908,6 @@ def get_partidas():
                 }
                 lineout_partida['jogador_adversario_2'] = {}
                 
-
-
             # lineout_partida['jogador_1'] = line[5]
             # lineout_partida['jogador_2'] = line[6]
             # lineout_partida['jogador_adversario_1'] = line[7]
@@ -875,7 +966,7 @@ def get_partidas():
                             connection.commit()
                             cursor.close()
                             connection.close()
-                    print(acertos)
+
                     # Devolve pontuação e verifica se o jogo deve continuar ou parar
                     
                     if acertos:
@@ -889,7 +980,6 @@ def get_partidas():
                             qtd_erros = quantidade_resultado1
                             qtd_acertos = 0
 
-                        
                         if len(acertos) == 2:
                             quantidade_resultado2 =  (acertos[1])[0]
                             tipo_resultado2 = (acertos[1])[1]
@@ -920,7 +1010,6 @@ def get_partidas():
 
                     set_partida['erros'] = qtd_erros
                     set_partida['acertos'] = qtd_acertos
-                    
                     
                     output_set.append(set_partida)
 
@@ -1020,6 +1109,12 @@ def post_jogada():
                 "minimum": 1,
                 "exclusiveMaximum": 999999999
             },
+            "tipoerro": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMaximum": 999999999
+
+            },
             "acerto": {
                 "type": "boolean",
             }
@@ -1033,14 +1128,17 @@ def post_jogada():
     except ValidationError as e:
         mensagem = 'JSON inválido.' + ' - Path: ' + str(e.path)  + ' - Message: ' + str(e.message)
         return jsonify({'erro' : mensagem})
+
+    if data['tipoerro'] == 0:
+        data['tipoerro'] = None
     
     # Realiza insert no banco de dados
     datetimenow = datetime.datetime.now()
     set_id = data['set']
-    sqlvar = (set_id, data['golpe'], data['quadrante'], data['acerto'], datetimenow, datetimenow)
+    sqlvar = (set_id, data['golpe'], data['quadrante'], data['tipoerro'], data['acerto'], datetimenow, datetimenow)
 
-    bloco = ("insert into jogada (set_id, golpe_id, quadrante_id, acerto, criado_em, atualizado_em) \
-            VALUES (%s, %s, %s, %s, %s, %s) ")
+    bloco = ("insert into jogada (set_id, golpe_id, quadrante_id, tipo_erro_id, acerto, criado_em, atualizado_em) \
+            VALUES (%s, %s, %s, %s, %s, %s, %s) ")
 
     try:
         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
@@ -1268,89 +1366,6 @@ def get_set():
         set_data['acertos'] = qtd_acertos
 
     return jsonify({'data_set': set_data})
-
-
-
-
-
-
-
-
-@app.route('/get_jogada', methods=['GET'])
-def get_jogada():
-    """ Devolve todos os dados de um set e suas jogadas """
-
-    # Verifica parâmetros de entrada
-    id_set = None
-    
-    if request.args.get('id_set'):
-        id_set = request.args.get('id_set')
-        
-    if not id_set:
-        id_set = '0'
-
-    if not id_set.isdigit():
-        return jsonify({'erro' : 'request.args[id_set] deve ser numerico'})
-
-    sqlvar = (id_set, )
-
-    bloco = (" select set.id, set.partida_id, set.ordem from set where set.id = %s ")
-    
-    try:
-        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
-        cursor = connection.cursor()
-        cursor.execute(bloco, sqlvar)
-        data_set = cursor.fetchone()
-    
-    except (Exception, psycopg2.Error) as error:
-        erro = str(error).rstrip()
-        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
-        return jsonify({'erro' : erro_banco})
-
-    finally:
-        if (connection):
-            connection.commit()
-            cursor.close()
-            connection.close()
-
-    set_data = {}
-    if data_set:
-        set_data['set_id'] = data_set[0]
-        set_data['partida_id'] = data_set[1]
-        set_data['ordem'] = data_set[2] 
-
-        sqlvar = (id_set,)
-
-        bloco = (" select acerto, count (acerto) from jogada where jogada.set_id = %s group by acerto ")
-        
-        try:
-            connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
-            cursor = connection.cursor()
-            cursor.execute(bloco, sqlvar)
-            data_acerto = cursor.fetchall()
-        
-        except (Exception, psycopg2.Error) as error:
-            erro = str(error).rstrip()
-            erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
-            return jsonify({'erro' : erro_banco})
-
-        finally:
-            if (connection):
-                connection.commit()
-                cursor.close()
-                connection.close()
-
-        output = []
-        if data_acerto:
-            acertos = {}
-            for line in data_acerto:
-                acertos['quantidade'] = line[0]
-                acertos['acerto'] = line[1]
-                output.append(acertos)
-
-    return jsonify({'data_set': output})
-
-
 
 
 

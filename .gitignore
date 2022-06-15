@@ -11,3 +11,5 @@ settings-DESENV.py
 apibadminton.log
 *.log
 .idea
+log.py
+rotas_relatorio.py

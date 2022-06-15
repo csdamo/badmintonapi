@@ -194,8 +194,8 @@ def get_jogador():
         lineout_jogador['email'] = jogadore_data[4]
         lineout_jogador['lateralidade'] = jogadore_data[5]
         foto = jogadore_data[6]
-        if len(foto) < 1:
-            lineout_jogador['foto'] = config['URLMEDIA'] + '/' + foto
+        if foto:
+            lineout_jogador['foto'] = ''
         else:
             lineout_jogador['foto'] = ''
 
@@ -268,8 +268,8 @@ def get_jogadores():
             lineout_jogador['email'] = line[4]
             lineout_jogador['lateralidade'] = line[5]
             foto = line[6]
-            if len(foto) < 1:
-                lineout_jogador['foto'] = config['URLMEDIA'] + '/' + foto
+            if foto:
+                lineout_jogador['foto'] = ''
             else:
                 lineout_jogador['foto'] = ''
 
@@ -494,6 +494,12 @@ def post_partida():
 
     #Verifica se Json é valido (conforme Json-schema).
     try:
+        if data['jogador_2'] == '':
+            data['jogador_2'] = 0
+        
+        if data['jogador_adversario_2'] == '':
+            data['jogador_adversario_2'] = 0
+        
         validate(data, schema)
 
     except ValidationError as e:
@@ -1369,20 +1375,229 @@ def get_set():
 
 
 
-LOGFILE = 'apibadminton.log'   #Log-File-Name
-LOGFILESIZE = 5000000    #Log-File-Size (bytes)
-LOGFILECOUNT = 4 #Rotate-Count-File
+# versão 2
+@app.route('/v2/get_relatoriopartida', methods=['GET'])
+def get_relatoriopartida_v2():
+    """ Retorna resultados da partida """
 
-#Config Log-File
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-h = logging.handlers.RotatingFileHandler(LOGFILE, maxBytes=LOGFILESIZE, backupCount=LOGFILECOUNT)
-f = logging.Formatter('[%(asctime)s] %(levelname)s:%(message)s', datefmt='%d/%m/%Y %H:%M:%S')
-h.setFormatter(f)
-logger.addHandler(h)
-logging.info('apibadminton started')
+    # Verifica parâmetros de entrada
+    id_partida = None
+    
+    if request.args.get('id_partida'):
+        id_partida = request.args.get('id_partida')
+        
+    if not id_partida:
+        id_partida = '0'
 
-#logging.warning('testa warning')
+    if not id_partida.isdigit():
+        return jsonify({'erro' : 'request.args[id_partida] deve ser numerico'})
+
+    sqlvar = (id_partida, )
+
+    # Pesquisa partida conforme id informado no parâmetro
+    bloco = " select set.id, set.ordem, partida.id, partida.data_partida, partida.tipo_jogo, partida.modalidade, partida.nome, \
+                partida.jogador_1_id, jogador.nome_jogador from set \
+                inner join partida on (partida.id = set.partida_id)\
+                inner join jogador on (partida.jogador_1_id = jogador.id) \
+                where set.partida_id = %s"
+                
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco, sqlvar)
+        partida_set_data = cursor.fetchall()
+
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    output_partida = []
+    if partida_set_data:
+        lineout_partida = {}
+        lineout_partida['set_resultado'] = []
+        
+        set_resultado_global = []
+        jogada_resultado_global = []
+
+        jogadas_partida = 0
+        acertos_partida = 0
+        erros_partida = 0
+        
+        for line in partida_set_data:
+            lineout_set = {}
+            
+            jogadas_set = 0
+            acertos_set = 0
+            erros_set = 0
+
+            id_set = line[0]
+
+            tupla = (id_set,)
+            
+            bloco = ("  SELECT jogada.golpe_id, jogada.quadrante_id, jogada.set_id, jogada.acerto, \
+                        count(jogada.id) \
+                        FROM jogada \
+                        where set_id = %s GROUP BY (golpe_id, quadrante_id, set_id, acerto);")
+
+            try:
+                connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+                cursor = connection.cursor()
+                cursor.execute(bloco, tupla)
+                dados_jogada = cursor.fetchall()
+            
+            except (Exception, psycopg2.Error) as error:
+                erro = str(error).rstrip()
+                erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+                return jsonify({'erro' : erro_banco})
+
+            finally:
+                if (connection):
+                    connection.commit()
+                    cursor.close()
+                    connection.close()
+           
+            if dados_jogada:
+                for jogada in dados_jogada:
+
+                    golpe_id = jogada[0]
+                    quadrante_id = jogada[1]
+                    set_id = jogada[2]
+                    acerto_jogada = jogada[3]
+                    quantidade_jogada = jogada[4]
+
+                    jogadas_set = jogadas_set + quantidade_jogada
+
+                    if acerto_jogada:
+                        acertos_set = acertos_set + quantidade_jogada
+                    else:
+                        erros_set = erros_set + quantidade_jogada
+
+
+                    tupla = (golpe_id,)
+                    bloco = ("  SELECT golpe.descricao_golpe from golpe where golpe.id = %s ")
+
+                    try:
+                        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+                        cursor = connection.cursor()
+                        cursor.execute(bloco, tupla)
+                        golpe = cursor.fetchone()
+                    
+                    except (Exception, psycopg2.Error) as error:
+                        erro = str(error).rstrip()
+                        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+                        return jsonify({'erro' : erro_banco})
+
+                    finally:
+                        if (connection):
+                            connection.commit()
+                            cursor.close()
+                            connection.close()
+                    
+                    tupla = (quadrante_id,)
+                    bloco = ("  select quadrante.descricao_quadrante FROM quadrante \
+                                where quadrante.id = %s ")
+
+                    try:
+                        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+                        cursor = connection.cursor()
+                        cursor.execute(bloco, tupla)
+                        quadrante = cursor.fetchone()
+                    
+                    except (Exception, psycopg2.Error) as error:
+                        erro = str(error).rstrip()
+                        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+                        return jsonify({'erro' : erro_banco})
+
+                    finally:
+                        if (connection):
+                            connection.commit()
+                            cursor.close()
+                            connection.close()
+                
+                    golpe = golpe[0]
+                    quadrante = quadrante[0]
+
+                    jogada_tupla = (set_id, acerto_jogada, golpe_id, golpe, quadrante_id, quadrante, quantidade_jogada)    
+                    jogada_resultado_global.append(jogada_tupla)
+
+
+            jogadas_partida = jogadas_partida + jogadas_set
+            acertos_partida = acertos_partida + acertos_set
+            erros_partida = erros_partida + erros_set
+            
+            set_data = (line[0], line[1], jogadas_set, acertos_set, erros_set)
+            set_resultado_global.append(set_data)
+        if jogadas_partida > 0:
+            # Dados da partida
+            lineout_partida['partida_id'] = line[2]
+            lineout_partida['data'] = line[3].strftime('%d-%m-%Y')
+            lineout_partida['tipo_jogo'] = line[4]
+            lineout_partida['modalidade'] = line[5]
+            lineout_partida['nome'] = line[6]
+            lineout_partida['jogador'] = line[8]
+
+            # Resultados da partida
+            lineout_partida['total_jogadas_partida'] = jogadas_partida
+            lineout_partida['total_acertos_partida'] = acertos_partida
+            lineout_partida['total_acertos_partida_%'] = round(((acertos_partida / jogadas_partida)*100), 2)
+            lineout_partida['total_erros_partida'] = erros_partida
+            lineout_partida['total_erros_partida_%'] = round(((erros_partida / jogadas_partida)*100), 2)
+            
+            if jogadas_partida > 0:
+                for line_set in set_resultado_global:
+                    set_resultado = {}
+                    if line_set[2] > 0:
+                        # Dados do set
+                        id_set = line_set[0]
+                        set_resultado['set_id'] = line_set[0]
+                        set_resultado['set_ordem'] = line_set[1]
+
+                        # Resultados individual do set
+                        set_resultado['set_total_jogadas'] = line_set[2]
+                        set_resultado['set_total_acertos'] = line_set[3]
+                        set_resultado['set_acertos_%_relacao_set'] = round(((line_set[3] / line_set[2])*100), 2)
+                        set_resultado['set_total_erros'] = line_set[4]
+                        set_resultado['set_erros_%_relacao_set'] = round(((line_set[4] / line_set[2])*100), 2)
+                        
+                        # Resultados individual do set
+                        set_resultado['set_total_%_relacao_partida'] = round(((line_set[2] / jogadas_partida)*100), 2)
+                        set_resultado['set_acertos_%_relacao_partida'] = round(((line_set[3] / jogadas_partida)*100), 2)
+                        set_resultado['set_erros_%_relacao_partida'] = round(((line_set[4] / jogadas_partida)*100), 2)
+                        
+                        set_resultado['jogadas'] = []
+                        if line_set[2] > 0:
+                            for line_jogada in jogada_resultado_global:
+                                jogada = {}
+                                if id_set == line_jogada[0]:
+                                    jogada['acerto'] = line_jogada[1]
+                                    jogada['golpe_id'] = line_jogada[2]
+                                    jogada['golpe'] = line_jogada[3]
+                                    jogada['quadrante'] = line_jogada[4]
+                                    jogada['quadrante'] = line_jogada[5]
+                                    jogada['quantidade'] = line_jogada[6]
+                                    print(line_jogada)
+                                    jogada['%_relacao_set'] = round(((line_jogada[6] / line_set[2])*100), 2)
+                                    set_resultado['jogadas'].append(jogada)
+
+                        lineout_partida['set_resultado'].append(set_resultado)
+            
+            output_partida.append(lineout_partida)
+
+
+    return jsonify({'relatorio_partida': output_partida})
+
+
+
+
+
+
+
 
 try:
     f = open('apibadminton.json',)
@@ -1448,7 +1663,7 @@ schema = {
 }
 
 
-#Verifica se Json é valido (conforme Json-schema)
+# Verifica se Json é valido (conforme Json-schema)
 try:
     validate(config, schema)
 

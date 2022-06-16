@@ -452,59 +452,15 @@ def post_partida():
     if not data:
         return jsonify({'erro' : 'JSON inválido.'})
 
-    if data['tipo_jogo'] == 'dupla':
-        if data['jogador_2'] == '':
-            data['jogador_2'] = 0
-        
-        if data['jogador_adversario_2'] == '':
-            data['jogador_adversario_2'] = 0
+    data['jogador_2'] = 0
+    data['jogador_adversario_2'] = 0
+   
             
-        schema = {
-            "type": "object",
-            "required": ["nome", "data", "tipo_jogo", "modalidade", "jogador_1", "jogador_2", "jogador_adversario_1",  "jogador_adversario_2"],
-            "properties": {
-                "nome": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                },
-                "data": {
-                    "type": "string",
-                    "format": "date"
-                },
-                "tipo_jogo": {
-                    "type": "string",
-                    "enum": ["simples", "dupla"]
-                },
-                "modalidade": {
-                    "type": "string",
-                    "enum": ["misto", "feminino", "masculino"]
-                },
-                "jogador_1": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "exclusiveMaximum": 999999999
-                },
-                "jogador_2": {
-                    "type": "integer",
-                },
-                "jogador_adversario_1": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "exclusiveMaximum": 999999999
-                },
-                "jogador_adversario_2": {
-                    "type": "integer",
-                }
-            }
-        }
-        
-    else:     
-        schema = {
+    schema = {
         "type": "object",
-        "required": ["nome", "data", "tipo_jogo", "modalidade", "jogador_1", "jogador_adversario_1"],
+        "required": ["nome", "data", "tipo_jogo", "modalidade", "jogador_1", "jogador_2", "jogador_adversario_1",  "jogador_adversario_2"],
         "properties": {
-             "nome": {
+            "nome": {
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 200
@@ -515,7 +471,7 @@ def post_partida():
             },
             "tipo_jogo": {
                 "type": "string",
-                 "enum": ["simples", "dupla"]
+                "enum": ["simples", "dupla"]
             },
             "modalidade": {
                 "type": "string",
@@ -526,13 +482,19 @@ def post_partida():
                 "minimum": 1,
                 "exclusiveMaximum": 999999999
             },
+            "jogador_2": {
+                "type": "integer",
+            },
             "jogador_adversario_1": {
                 "type": "integer",
                 "minimum": 1,
                 "exclusiveMaximum": 999999999
             },
-          }
+            "jogador_adversario_2": {
+                "type": "integer",
+            }
         }
+    }
 
     #Verifica se Json é valido (conforme Json-schema).
     try:

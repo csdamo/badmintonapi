@@ -452,9 +452,57 @@ def post_partida():
     if not data:
         return jsonify({'erro' : 'JSON inválido.'})
 
-    schema = {
+    if data['tipo_jogo'] == 'dupla':
+        if data['jogador_2'] == '':
+            data['jogador_2'] = 0
+        
+        if data['jogador_adversario_2'] == '':
+            data['jogador_adversario_2'] = 0
+            
+        schema = {
+            "type": "object",
+            "required": ["nome", "data", "tipo_jogo", "modalidade", "jogador_1", "jogador_2", "jogador_adversario_1",  "jogador_adversario_2"],
+            "properties": {
+                "nome": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                },
+                "data": {
+                    "type": "string",
+                    "format": "date"
+                },
+                "tipo_jogo": {
+                    "type": "string",
+                    "enum": ["simples", "dupla"]
+                },
+                "modalidade": {
+                    "type": "string",
+                    "enum": ["misto", "feminino", "masculino"]
+                },
+                "jogador_1": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "exclusiveMaximum": 999999999
+                },
+                "jogador_2": {
+                    "type": "integer",
+                },
+                "jogador_adversario_1": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "exclusiveMaximum": 999999999
+                },
+                "jogador_adversario_2": {
+                    "type": "integer",
+                }
+            }
+        }
+        
+    else:     
+        schema = {
         "type": "object",
-        "required": ["nome", "data", "tipo_jogo", "modalidade", "jogador_1", "jogador_2", "jogador_adversario_1",  "jogador_adversario_2"],
+        "required": ["nome", "data", "tipo_jogo", "modalidade", "jogador_1", "jogador_adversario_1"],
         "properties": {
              "nome": {
                 "type": "string",
@@ -478,28 +526,16 @@ def post_partida():
                 "minimum": 1,
                 "exclusiveMaximum": 999999999
             },
-            "jogador_2": {
-                "type": "integer",
-            },
             "jogador_adversario_1": {
                 "type": "integer",
                 "minimum": 1,
                 "exclusiveMaximum": 999999999
             },
-            "jogador_adversario_2": {
-                "type": "integer",
-            }
           }
         }
 
     #Verifica se Json é valido (conforme Json-schema).
     try:
-        if data['jogador_2'] == '':
-            data['jogador_2'] = 0
-        
-        if data['jogador_adversario_2'] == '':
-            data['jogador_adversario_2'] = 0
-        
         validate(data, schema)
 
     except ValidationError as e:
@@ -512,15 +548,21 @@ def post_partida():
     tipo_jogo = data["tipo_jogo"]
     modalidade = data["modalidade"]
     jogador_1 = data["jogador_1"]
-    jogador_2 = data["jogador_2"]
     jogador_adversario_1 = data["jogador_adversario_1"]
-    jogador_adversario_2 = data["jogador_adversario_2"]
     datetimenow = datetime.datetime.now()
 
     if tipo_jogo == 'simples':
         jogador_2 = None
         jogador_adversario_2 = None
     
+    else:
+        jogador_2 = data["jogador_2"]
+        jogador_adversario_2 = data["jogador_adversario_2"]
+        if jogador_2 == 0:
+            jogador_2 = None
+        if jogador_adversario_2 == 0:
+            jogador_adversario_2 = None
+
     # Insert no banco de dados
     sqlvar = (nome, data_partida, tipo_jogo, modalidade, jogador_1, jogador_2, jogador_adversario_1, jogador_adversario_2, datetimenow, datetimenow)
 

@@ -1564,14 +1564,14 @@ def get_relatoriopartida_v1():
                         # Resultados individual do set
                         set_resultado['set_total_jogadas'] = line_set[2]
                         set_resultado['set_total_acertos'] = line_set[3]
-                        set_resultado['set_acertos_%_relacao_set'] = round(((line_set[3] / line_set[2])*100), 2)
+                        set_resultado['set_acertos_relacao_set'] = round(((line_set[3] / line_set[2])*100), 2)
                         set_resultado['set_total_erros'] = line_set[4]
-                        set_resultado['set_erros_%_relacao_set'] = round(((line_set[4] / line_set[2])*100), 2)
+                        set_resultado['set_erros_relacao_set'] = round(((line_set[4] / line_set[2])*100), 2)
                         
                         # Resultados individual do set
-                        set_resultado['set_total_%_relacao_partida'] = round(((line_set[2] / jogadas_partida)*100), 2)
-                        set_resultado['set_acertos_%_relacao_partida'] = round(((line_set[3] / jogadas_partida)*100), 2)
-                        set_resultado['set_erros_%_relacao_partida'] = round(((line_set[4] / jogadas_partida)*100), 2)
+                        set_resultado['set_total_relacao_partida'] = round(((line_set[2] / jogadas_partida)*100), 2)
+                        set_resultado['set_acertos_relacao_partida'] = round(((line_set[3] / jogadas_partida)*100), 2)
+                        set_resultado['set_erros_relacao_partida'] = round(((line_set[4] / jogadas_partida)*100), 2)
                         
                         set_resultado['jogadas'] = []
                         if line_set[2] > 0:
@@ -1584,7 +1584,7 @@ def get_relatoriopartida_v1():
                                     jogada['quadrante'] = line_jogada[4]
                                     jogada['quadrante'] = line_jogada[5]
                                     jogada['quantidade'] = line_jogada[6]
-                                    jogada['%_relacao_set'] = round(((line_jogada[6] / line_set[2])*100), 2)
+                                    jogada['relacao_set'] = round(((line_jogada[6] / line_set[2])*100), 2)
                                     set_resultado['jogadas'].append(jogada)
 
                         lineout_partida['set_resultado'].append(set_resultado)
@@ -1820,14 +1820,14 @@ def get_relatoriopartida_v2():
                         # Resultados individual do set
                         set_resultado['C_set_total'] = line_set[2]
                         set_resultado['E_set_acertos'] = line_set[3]
-                        set_resultado['G_set_acertos_%_relacao_set'] = round(((line_set[3] / line_set[2])*100), 2)
+                        set_resultado['G_set_acertos_relacao_set'] = round(((line_set[3] / line_set[2])*100), 2)
                         set_resultado['H_set_erros'] = line_set[4]
-                        set_resultado['J_set_erros_%_relacao_set'] = round(((line_set[4] / line_set[2])*100), 2)
+                        set_resultado['J_set_erros_relacao_set'] = round(((line_set[4] / line_set[2])*100), 2)
                         
                         # Resultados individual do set
-                        set_resultado['D_set_total_%_relacao_partida'] = round(((line_set[2] / jogadas_partida)*100), 2)
-                        set_resultado['F_set_acertos_%_relacao_partida'] = round(((line_set[3] / jogadas_partida)*100), 2)
-                        set_resultado['I_set_erros_%_relacao_partida'] = round(((line_set[4] / jogadas_partida)*100), 2)
+                        set_resultado['D_set_total_relacao_partida'] = round(((line_set[2] / jogadas_partida)*100), 2)
+                        set_resultado['F_set_acertos_relacao_partida'] = round(((line_set[3] / jogadas_partida)*100), 2)
+                        set_resultado['I_set_erros_relacao_partida'] = round(((line_set[4] / jogadas_partida)*100), 2)
                         
                         set_resultado['K_jogadas'] = []
                         if line_set[2] > 0:
@@ -1838,7 +1838,7 @@ def get_relatoriopartida_v2():
                                     jogada['A_golpe_id'] = line_jogada[1]
                                     jogada['B_golpe'] = line_jogada[2]
                                     jogada['C_golpe_total'] = line_jogada[3]
-                                    jogada['D_golpe_total_%_relacao_set'] = round(((line_jogada[3] / line_set[2])*100), 2)
+                                    jogada['D_golpe_total_relacao_set'] = round(((line_jogada[3] / line_set[2])*100), 2)
 
                                     jogada['I_quadrantes_acerto'] = []
                                     jogada['J_quadrantes_erro'] = []
@@ -1852,21 +1852,21 @@ def get_relatoriopartida_v2():
                                                     quadrante['A_quadrante_id'] = line_quadrante[2]
                                                     quadrante['B_quadrante'] = line_quadrante[3]
                                                     quadrante['C_quadrante_total'] = line_quadrante[5]
-                                                    quadrante['D_quadrante_%_relacao_golpe'] = round(((line_quadrante[5] / line_jogada[3])*100), 2)
+                                                    quadrante['D_quadrante_relacao_golpe'] = round(((line_quadrante[5] / line_jogada[3])*100), 2)
                                                     # jogadas_acerto = jogadas_acerto + line_quadrante[5]
                                                     jogada['I_quadrantes_acerto'].append(quadrante)
                                                 else:
                                                     quadrante['A_quadrante_id'] = line_quadrante[2]
                                                     quadrante['B_quadrante'] = line_quadrante[3]
                                                     quadrante['C_quadrante_total'] = line_quadrante[5]
-                                                    quadrante['D_quadrante_%_relacao_golpe'] = round(((line_quadrante[5] / line_jogada[3])*100), 2)
+                                                    quadrante['D_quadrante_relacao_golpe'] = round(((line_quadrante[5] / line_jogada[3])*100), 2)
                                                     # jogadas_erro = jogadas_erro + line_quadrante[5]
                                                     jogada['J_quadrantes_erro'].append(quadrante)
 
                                     jogada['E_golpe_acertos'] = line_jogada[4]
-                                    jogada['F_golpe_%_acertos'] = round(((line_jogada[4]/line_jogada[3])*100), 2)
+                                    jogada['F_golpe_acertos_porc'] = round(((line_jogada[4]/line_jogada[3])*100), 2)
                                     jogada['G_golpe_erros'] = line_jogada[5]
-                                    jogada['H_golpe_%_erros'] = round(((line_jogada[5]/line_jogada[3])*100), 2)
+                                    jogada['H_golpe_erros_porc'] = round(((line_jogada[5]/line_jogada[3])*100), 2)
                                     set_resultado['K_jogadas'].append(jogada)
 
                         lineout_partida['L_set_resultado'].append(set_resultado)
@@ -2112,14 +2112,14 @@ def get_relatoriopartida_v3():
                         # Resultados individual do set
                         set_resultado['C_set_total'] = line_set[2]
                         set_resultado['E_set_acertos'] = line_set[3]
-                        set_resultado['G_set_acertos_%_relacao_set'] = round(((line_set[3] / line_set[2])*100), 2)
+                        set_resultado['G_set_acertos_relacao_set'] = round(((line_set[3] / line_set[2])*100), 2)
                         set_resultado['H_set_erros'] = line_set[4]
-                        set_resultado['J_set_erros_%_relacao_set'] = round(((line_set[4] / line_set[2])*100), 2)
+                        set_resultado['J_set_erros_relacao_set'] = round(((line_set[4] / line_set[2])*100), 2)
                         
                         # Resultados individual do set
-                        set_resultado['D_set_total_%_relacao_partida'] = round(((line_set[2] / jogadas_partida)*100), 2)
-                        set_resultado['F_set_acertos_%_relacao_partida'] = round(((line_set[3] / jogadas_partida)*100), 2)
-                        set_resultado['I_set_erros_%_relacao_partida'] = round(((line_set[4] / jogadas_partida)*100), 2)
+                        set_resultado['D_set_total_relacao_partida'] = round(((line_set[2] / jogadas_partida)*100), 2)
+                        set_resultado['F_set_acertos_relacao_partida'] = round(((line_set[3] / jogadas_partida)*100), 2)
+                        set_resultado['I_set_erros_relacao_partida'] = round(((line_set[4] / jogadas_partida)*100), 2)
                         
                         set_resultado['K_jogadas'] = []
                         if line_set[2] > 0:
@@ -2130,7 +2130,7 @@ def get_relatoriopartida_v3():
                                     jogada['A_golpe_id'] = line_jogada[1]
                                     jogada['B_golpe'] = line_jogada[2]
                                     jogada['C_golpe_total'] = line_jogada[3]
-                                    jogada['D_golpe_total_%_relacao_set'] = round(((line_jogada[3] / line_set[2])*100), 2)
+                                    jogada['D_golpe_total_relacao_set'] = round(((line_jogada[3] / line_set[2])*100), 2)
 
                                     jogada['I_quadrantes_acerto'] = []
                                     jogada['J_quadrantes_erro'] = []
@@ -2144,14 +2144,14 @@ def get_relatoriopartida_v3():
                                                     quadrante['A_quadrante_id'] = line_quadrante[2]
                                                     quadrante['B_quadrante'] = line_quadrante[3]
                                                     quadrante['C_quadrante_total'] = line_quadrante[5]
-                                                    quadrante['D_quadrante_%_relacao_golpe'] = round(((line_quadrante[5] / line_jogada[3])*100), 2)
+                                                    quadrante['D_quadrante_relacao_golpe'] = round(((line_quadrante[5] / line_jogada[3])*100), 2)
                                                     # jogadas_acerto = jogadas_acerto + line_quadrante[5]
                                                     jogada['I_quadrantes_acerto'].append(quadrante)
                                                 else:
                                                     quadrante['A_quadrante_id'] = line_quadrante[2]
                                                     quadrante['B_quadrante'] = line_quadrante[3]
                                                     quadrante['C_quadrante_total'] = line_quadrante[5]
-                                                    quadrante['D_quadrante_%_relacao_golpe'] = round(((line_quadrante[5] / line_jogada[3])*100), 2)
+                                                    quadrante['D_quadrante_relacao_golpe'] = round(((line_quadrante[5] / line_jogada[3])*100), 2)
                                                     quadrante['E_tipo_erro'] = []
                                                     if erros_golpe_global:
                                                             for line_erro in erros_golpe_global:
@@ -2165,9 +2165,9 @@ def get_relatoriopartida_v3():
                                                                     
                                                     jogada['J_quadrantes_erro'].append(quadrante)
                                     jogada['E_golpe_acertos'] = line_jogada[4]
-                                    jogada['F_golpe_%_acertos'] = round(((line_jogada[4]/line_jogada[3])*100), 2)
+                                    jogada['F_golpe_acertos_porc'] = round(((line_jogada[4]/line_jogada[3])*100), 2)
                                     jogada['G_golpe_erros'] = line_jogada[5]
-                                    jogada['H_golpe_%_erros'] = round(((line_jogada[5]/line_jogada[3])*100), 2)
+                                    jogada['H_golpe_erros_porc'] = round(((line_jogada[5]/line_jogada[3])*100), 2)
                                     set_resultado['K_jogadas'].append(jogada)
 
                         lineout_partida['L_set_resultado'].append(set_resultado)

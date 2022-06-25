@@ -1378,10 +1378,9 @@ def get_set():
     return jsonify({'data_set': set_data})
 
 
-
-# versão 2
-@app.route('/v2/get_relatoriopartida', methods=['GET'])
-def get_relatoriopartida_v2():
+# versão 1
+@app.route('/v1/get_relatoriopartida', methods=['GET'])
+def get_relatoriopartida_v1():
     """ Retorna resultados da partida """
 
     # Verifica parâmetros de entrada
@@ -1585,7 +1584,6 @@ def get_relatoriopartida_v2():
                                     jogada['quadrante'] = line_jogada[4]
                                     jogada['quadrante'] = line_jogada[5]
                                     jogada['quantidade'] = line_jogada[6]
-                                    print(line_jogada)
                                     jogada['%_relacao_set'] = round(((line_jogada[6] / line_set[2])*100), 2)
                                     set_resultado['jogadas'].append(jogada)
 
@@ -1596,6 +1594,588 @@ def get_relatoriopartida_v2():
 
     return jsonify({'relatorio_partida': output_partida})
 
+# versão 2
+@app.route('/v2/get_relatoriopartida', methods=['GET'])
+def get_relatoriopartida_v2():
+    """ Retorna resultados da partida """
+
+    # Verifica parâmetros de entrada
+    id_partida = None
+    
+    if request.args.get('id_partida'):
+        id_partida = request.args.get('id_partida')
+        
+    if not id_partida:
+        id_partida = '0'
+
+    if not id_partida.isdigit():
+        return jsonify({'erro' : 'request.args[id_partida] deve ser numerico'})
+
+    sqlvar = (id_partida, )
+
+    # Pesquisa partida conforme id informado no parâmetro
+    bloco = " select set.id, set.ordem, partida.id, partida.data_partida, partida.tipo_jogo, partida.modalidade, partida.nome, \
+                partida.jogador_1_id, jogador.nome_jogador from set \
+                inner join partida on (partida.id = set.partida_id)\
+                inner join jogador on (partida.jogador_1_id = jogador.id) \
+                where set.partida_id = %s"
+                
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco, sqlvar)
+        partida_set_data = cursor.fetchall()
+
+        """
+        RESULTADO DOS 3 SETS 
+        [
+            (7, 1, 23, 
+            datetime.datetime(2022, 5, 30, 0, 0, tzinfo=datetime.timezone(datetime.timedelta
+            (days=-1, seconds=75600))), 'simples', 'misto', 'Partida Relatorio', 3, 'Fabiana da Silva'), 
+            
+            (8, 2, 23, datetime.datetime(2022, 5, 30, 0, 0, tzinfo=datetime.timezone(datetime.timedelta
+            (days=-1, seconds=75600))), 'simples', 'misto', 'Partida Relatorio', 3, 'Fabiana da Silva')]
+
+        """
+
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    output_partida = []  # Verificar se é necessario criar uma lista de partidas
+    if partida_set_data:
+        lineout_partida = {}
+        lineout_partida['L_set_resultado'] = []
+        
+        set_resultado_global = []
+        jogada_resultado_global = []
+        quadrante_resultado_global = []
+        
+        jogadas_partida = 0
+        acertos_partida = 0
+        erros_partida = 0
+
+        
+   
+        for line in partida_set_data:
+
+            jogadas_set = 0
+            acertos_set = 0
+            erros_set = 0
+          
+            lineout_set = {}
+            
+            id_set = line[0]
+            
+            tupla = (id_set,)
+            
+            # Pesquiusa quantidade de cada golpe no set
+            bloco = ("  SELECT jogada.golpe_id, jogada.set_id, golpe.descricao_golpe, count(jogada.id) \
+                        FROM jogada \
+                        inner join golpe on (golpe.id = jogada.golpe_id)    \
+                        where set_id = %s GROUP BY (golpe_id, set_id, golpe.descricao_golpe);")
+
+            try:
+                connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+                cursor = connection.cursor()
+                cursor.execute(bloco, tupla)
+                dados_jogada = cursor.fetchall()
+
+                """
+                JOGADAS POR SET:  [(1, 7, 'Saque', 5), (3, 7, 'Backhand', 9), (7, 7, 'Drive', 8)]
+                JOGADAS POR SET:  [(1, 8, 'Saque', 2)]
+
+                """
+            
+            except (Exception, psycopg2.Error) as error:
+                erro = str(error).rstrip()
+                erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+                return jsonify({'erro' : erro_banco})
+
+            finally:
+                if (connection):
+                    connection.commit()
+                    cursor.close()
+                    connection.close()
+            
+            if dados_jogada:
+                for jogada in dados_jogada:
+
+                    total_jogadas = 0
+                    total_acertos_jogadas = 0
+                    total_erros_jogadas = 0
+
+                    id_golpe = jogada[0]
+                    golpe = jogada[2]
+                    set_id = jogada[1]   
+                    quantidade_jogada = jogada[3]  # total de jogadas do golpe
+                    jogadas_set = jogadas_set + quantidade_jogada  # Total de jogadas do set
+
+                    tupla = (id_set, id_golpe)
+
+                    # Pesquisa os quadrantes agrupados por erro e acerto 
+                    bloco = ("  SELECT jogada.quadrante_id, acerto, quadrante.descricao_quadrante, count(jogada.id), jogada.set_id \
+                            FROM jogada \
+                            inner join quadrante on (quadrante.id = jogada.quadrante_id)    \
+                            where set_id = %s and golpe_id = %s GROUP BY (quadrante_id, acerto, quadrante.descricao_quadrante, jogada.set_id);")
+
+                    try:
+                        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+                        cursor = connection.cursor()
+                        cursor.execute(bloco, tupla)
+                        dados_quadrante = cursor.fetchall()
+
+                        """
+                        DADOS QUADRANTES:  [(1, False, 'Q 01', 2), (1, True, 'Q 01', 3)]
+                        DADOS QUADRANTES:  [(2, False, 'Q 02', 4), (2, True, 'Q 02', 1), (5, False, 'Q 05', 2), (5, True, 'Q 05', 2)]
+                        DADOS QUADRANTES:  [(2, False, 'Q 02', 3), (2, True, 'Q 02', 5)]
+                        DADOS QUADRANTES:  [(1, True, 'Q 01', 2)]
+
+                        """
+                    
+                    except (Exception, psycopg2.Error) as error:
+                        erro = str(error).rstrip()
+                        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+                        return jsonify({'erro' : erro_banco})
+
+                    finally:
+                        if (connection):
+                            connection.commit()
+                            cursor.close()
+                            connection.close()
+
+                    if dados_quadrante:
+                        for line_quadrante in dados_quadrante:
+
+                            id_quadrante = line_quadrante[0]
+                            acerto_quadrante = line_quadrante[1]
+                            quadrante = line_quadrante[2]
+                            quantidade_jogada_quadrante = line_quadrante[3]
+                            set_id_quadrante = line_quadrante[4]
+
+                            if acerto_quadrante:
+                                total_acertos_jogadas = total_acertos_jogadas + quantidade_jogada_quadrante
+                            else:
+                                total_erros_jogadas = total_erros_jogadas + quantidade_jogada_quadrante
+                                
+                            tupla = (id_set, id_golpe, id_quadrante)
+
+                            quadrante_tupla = (set_id_quadrante, id_golpe, id_quadrante, quadrante, acerto_quadrante, quantidade_jogada_quadrante)
+                            quadrante_resultado_global.append(quadrante_tupla)
+                            
+
+                            if acerto_quadrante:
+                                acertos_set = acertos_set + quantidade_jogada_quadrante
+                            else:
+                                erros_set = erros_set + quantidade_jogada_quadrante
+
+
+                        # total_jogadas = total_acertos_jogadas + total_erros_jogadas
+                    
+                    jogada_tupla = (set_id, id_golpe, golpe, quantidade_jogada, total_acertos_jogadas, total_erros_jogadas)    
+                    jogada_resultado_global.append(jogada_tupla)
+                          
+                # acertos_set = acertos_set + total_acertos_jogadas
+                # erros_set = erros_set + total_erros_jogadas
+
+            jogadas_partida = jogadas_partida + jogadas_set
+            acertos_partida = acertos_partida + acertos_set
+            erros_partida = erros_partida + erros_set
+
+            set_data = (line[0], line[1], jogadas_set, acertos_set, erros_set)
+            set_resultado_global.append(set_data)
+
+
+        if jogadas_partida > 0:
+            # Dados da partida
+            lineout_partida['A_partida_id'] = line[2]
+            lineout_partida['B_data'] = line[3].strftime('%d-%m-%Y')
+            lineout_partida['C_tipo_jogo'] = line[4]
+            lineout_partida['D_modalidade'] = line[5]
+            lineout_partida['E_nome'] = line[6]
+            lineout_partida['F_jogador'] = line[8]
+
+            # Resultados da partida
+            lineout_partida['G_partida_total'] = jogadas_partida
+            lineout_partida['H_partida_acertos'] = acertos_partida
+            lineout_partida['I_partida_acertos_%'] = round(((acertos_partida / jogadas_partida)*100), 2)
+            lineout_partida['J_partida_erros'] = erros_partida
+            lineout_partida['K_partida_erros_%'] = round(((erros_partida / jogadas_partida)*100), 2)
+            
+            if jogadas_partida > 0:
+                for line_set in set_resultado_global:
+                    set_resultado = {}
+                    if line_set[2] > 0:
+                        # Dados do set
+                        id_set = line_set[0]
+                        set_resultado['A_set_id'] = line_set[0]
+                        set_resultado['B_set_ordem'] = line_set[1]
+
+                        # Resultados individual do set
+                        set_resultado['C_set_total'] = line_set[2]
+                        set_resultado['E_set_acertos'] = line_set[3]
+                        set_resultado['G_set_acertos_%_relacao_set'] = round(((line_set[3] / line_set[2])*100), 2)
+                        set_resultado['H_set_erros'] = line_set[4]
+                        set_resultado['J_set_erros_%_relacao_set'] = round(((line_set[4] / line_set[2])*100), 2)
+                        
+                        # Resultados individual do set
+                        set_resultado['D_set_total_%_relacao_partida'] = round(((line_set[2] / jogadas_partida)*100), 2)
+                        set_resultado['F_set_acertos_%_relacao_partida'] = round(((line_set[3] / jogadas_partida)*100), 2)
+                        set_resultado['I_set_erros_%_relacao_partida'] = round(((line_set[4] / jogadas_partida)*100), 2)
+                        
+                        set_resultado['K_jogadas'] = []
+                        if line_set[2] > 0:
+                            for line_jogada in jogada_resultado_global:
+                                jogada = {}
+                                if id_set == line_jogada[0]:
+                                    id_golpe = line_jogada[1]
+                                    jogada['A_golpe_id'] = line_jogada[1]
+                                    jogada['B_golpe'] = line_jogada[2]
+                                    jogada['C_golpe_total'] = line_jogada[3]
+                                    jogada['D_golpe_total_%_relacao_set'] = round(((line_jogada[3] / line_set[2])*100), 2)
+
+                                    jogada['I_quadrantes_acerto'] = []
+                                    jogada['J_quadrantes_erro'] = []
+                                    if line_jogada[3] > 0:
+                                        jogadas_acerto = 0
+                                        jogadas_erro = 0
+                                        for line_quadrante in quadrante_resultado_global:
+                                            quadrante = {}
+                                            if id_golpe == line_quadrante[1] and line_jogada[0] == line_quadrante[0]:
+                                                if line_quadrante[4]:
+                                                    quadrante['A_quadrante_id'] = line_quadrante[2]
+                                                    quadrante['B_quadrante'] = line_quadrante[3]
+                                                    quadrante['C_quadrante_total'] = line_quadrante[5]
+                                                    quadrante['D_quadrante_%_relacao_golpe'] = round(((line_quadrante[5] / line_jogada[3])*100), 2)
+                                                    # jogadas_acerto = jogadas_acerto + line_quadrante[5]
+                                                    jogada['I_quadrantes_acerto'].append(quadrante)
+                                                else:
+                                                    quadrante['A_quadrante_id'] = line_quadrante[2]
+                                                    quadrante['B_quadrante'] = line_quadrante[3]
+                                                    quadrante['C_quadrante_total'] = line_quadrante[5]
+                                                    quadrante['D_quadrante_%_relacao_golpe'] = round(((line_quadrante[5] / line_jogada[3])*100), 2)
+                                                    # jogadas_erro = jogadas_erro + line_quadrante[5]
+                                                    jogada['J_quadrantes_erro'].append(quadrante)
+
+                                    jogada['E_golpe_acertos'] = line_jogada[4]
+                                    jogada['F_golpe_%_acertos'] = round(((line_jogada[4]/line_jogada[3])*100), 2)
+                                    jogada['G_golpe_erros'] = line_jogada[5]
+                                    jogada['H_golpe_%_erros'] = round(((line_jogada[5]/line_jogada[3])*100), 2)
+                                    set_resultado['K_jogadas'].append(jogada)
+
+                        lineout_partida['L_set_resultado'].append(set_resultado)
+            
+            output_partida.append(lineout_partida)
+
+
+    return jsonify({'relatorio_partida': output_partida})
+
+
+# versão 3
+@app.route('/v3/get_relatoriopartida', methods=['GET'])
+def get_relatoriopartida_v3():
+    """ Retorna resultados da partida """
+
+    # Verifica parâmetros de entrada
+    id_partida = None
+    
+    if request.args.get('id_partida'):
+        id_partida = request.args.get('id_partida')
+        
+    if not id_partida:
+        id_partida = '0'
+
+    if not id_partida.isdigit():
+        return jsonify({'erro' : 'request.args[id_partida] deve ser numerico'})
+
+    sqlvar = (id_partida, )
+
+    # Pesquisa partida conforme id informado no parâmetro
+    bloco = " select set.id, set.ordem, partida.id, partida.data_partida, partida.tipo_jogo, partida.modalidade, partida.nome, \
+                partida.jogador_1_id, jogador.nome_jogador from set \
+                inner join partida on (partida.id = set.partida_id)\
+                inner join jogador on (partida.jogador_1_id = jogador.id) \
+                where set.partida_id = %s"
+                
+    try:
+        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+        cursor = connection.cursor()
+        cursor.execute(bloco, sqlvar)
+        partida_set_data = cursor.fetchall()
+
+    except (Exception, psycopg2.Error) as error:
+        erro = str(error).rstrip()
+        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+        return jsonify({'erro' : erro_banco})
+
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    output_partida = []  # Verificar se é necessario criar uma lista de partidas
+    if partida_set_data:
+        lineout_partida = {}
+        lineout_partida['L_set_resultado'] = []
+        
+        set_resultado_global = []
+        jogada_resultado_global = []
+        quadrante_resultado_global = []
+        erros_golpe_global = []
+
+        jogadas_partida = 0
+        acertos_partida = 0
+        erros_partida = 0
+   
+        for line in partida_set_data:
+
+            jogadas_set = 0
+            acertos_set = 0
+            erros_set = 0
+          
+            lineout_set = {}
+            
+            id_set = line[0]
+            
+            tupla = (id_set,)
+            
+            # Pesquiusa quantidade de cada golpe no set
+            bloco = ("  SELECT jogada.golpe_id, jogada.set_id, golpe.descricao_golpe, count(jogada.id) \
+                        FROM jogada \
+                        inner join golpe on (golpe.id = jogada.golpe_id)    \
+                        where set_id = %s GROUP BY (golpe_id, set_id, golpe.descricao_golpe);")
+
+            try:
+                connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+                cursor = connection.cursor()
+                cursor.execute(bloco, tupla)
+                dados_jogada = cursor.fetchall()
+            
+            except (Exception, psycopg2.Error) as error:
+                erro = str(error).rstrip()
+                erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+                return jsonify({'erro' : erro_banco})
+
+            finally:
+                if (connection):
+                    connection.commit()
+                    cursor.close()
+                    connection.close()
+            
+            if dados_jogada:
+                for jogada in dados_jogada:
+
+                    total_jogadas = 0
+                    total_acertos_jogadas = 0
+                    total_erros_jogadas = 0
+
+                    id_golpe = jogada[0]
+                    golpe = jogada[2]
+                    set_id = jogada[1]   
+                    quantidade_jogada = jogada[3]  # total de jogadas do golpe
+                    jogadas_set = jogadas_set + quantidade_jogada  # Total de jogadas do set
+
+                    tupla = (id_set, id_golpe)
+
+                    # Pesquisa os quadrantes agrupados por erro e acerto 
+                    bloco = ("  SELECT jogada.quadrante_id, acerto, quadrante.descricao_quadrante, count(jogada.id), jogada.set_id \
+                            FROM jogada \
+                            inner join quadrante on (quadrante.id = jogada.quadrante_id)    \
+                            where set_id = %s and golpe_id = %s GROUP BY (quadrante_id, acerto, quadrante.descricao_quadrante, jogada.set_id);")
+
+                    try:
+                        connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+                        cursor = connection.cursor()
+                        cursor.execute(bloco, tupla)
+                        dados_quadrante = cursor.fetchall()
+                    
+                    except (Exception, psycopg2.Error) as error:
+                        erro = str(error).rstrip()
+                        erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+                        return jsonify({'erro' : erro_banco})
+
+                    finally:
+                        if (connection):
+                            connection.commit()
+                            cursor.close()
+                            connection.close()
+
+                    if dados_quadrante:
+                        for line_quadrante in dados_quadrante:
+
+                            id_quadrante = line_quadrante[0]
+                            acerto_quadrante = line_quadrante[1]
+                            quadrante = line_quadrante[2]
+                            quantidade_jogada_quadrante = line_quadrante[3]
+                            set_id_quadrante = line_quadrante[4]
+
+                            if acerto_quadrante:
+                                total_acertos_jogadas = total_acertos_jogadas + quantidade_jogada_quadrante
+                            else:
+                                total_erros_jogadas = total_erros_jogadas + quantidade_jogada_quadrante
+
+
+                          
+                                
+                            tupla = (id_set, id_golpe, id_quadrante)
+
+                            # Pesquisar os erros de saque 
+                            bloco = ("  SELECT jogada.golpe_id, jogada.quadrante_id, acerto, tipoerro.descricao_erro, \
+                                    count(jogada.id), jogada.set_id, jogada.tipo_erro_id \
+                                    FROM jogada \
+                                    inner join tipoerro on (tipoerro.id = jogada.tipo_erro_id)    \
+                                    where set_id = %s and golpe_id = %s and quadrante_id = %s \
+                                    GROUP BY (golpe_id, quadrante_id, acerto, tipoerro.descricao_erro, jogada.set_id, jogada.tipo_erro_id);")
+
+                            try:
+                                connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
+                                cursor = connection.cursor()
+                                cursor.execute(bloco, tupla)
+                                dados_tipo_erro = cursor.fetchall()    
+                                                        
+                            except (Exception, psycopg2.Error) as error:
+                                erro = str(error).rstrip()
+                                erro_banco = 'Erro ao acessar o Banco de Dados (' + erro + ').'
+                                return jsonify({'erro' : erro_banco})
+
+                            finally:
+                                if (connection):
+                                    connection.commit()
+                                    cursor.close()
+                                    connection.close()
+                                    
+                            if dados_tipo_erro:
+                                for line_erro in dados_tipo_erro:
+                                    golpe_id_erro = line_erro[0]
+                                    quadrante_id_erro = line_erro[1]
+                                    acerto = line_erro[2]
+                                    descricao_erro = line_erro[3]
+                                    quantidade_erro = line_erro[4]
+                                    set_id_erro = line_erro[5]
+                                    tipo_erro_id = line_erro[6]
+                            
+                                    erros_golpe_tupla = (golpe_id_erro, quadrante_id_erro, acerto, descricao_erro, quantidade_erro, set_id_erro, tipo_erro_id)
+                                    erros_golpe_global.append(erros_golpe_tupla)
+
+
+                            quadrante_tupla = (set_id_quadrante, id_golpe, id_quadrante, quadrante, acerto_quadrante, quantidade_jogada_quadrante)
+                            quadrante_resultado_global.append(quadrante_tupla)
+                            
+
+                            if acerto_quadrante:
+                                acertos_set = acertos_set + quantidade_jogada_quadrante
+                            else:
+                                erros_set = erros_set + quantidade_jogada_quadrante
+                    
+                    jogada_tupla = (set_id, id_golpe, golpe, quantidade_jogada, total_acertos_jogadas, total_erros_jogadas)    
+                    jogada_resultado_global.append(jogada_tupla)
+
+            jogadas_partida = jogadas_partida + jogadas_set
+            acertos_partida = acertos_partida + acertos_set
+            erros_partida = erros_partida + erros_set
+
+            set_data = (line[0], line[1], jogadas_set, acertos_set, erros_set)
+            set_resultado_global.append(set_data)
+
+
+        if jogadas_partida > 0:
+            # Dados da partida
+            lineout_partida['A_partida_id'] = line[2]
+            lineout_partida['B_data'] = line[3].strftime('%d-%m-%Y')
+            lineout_partida['C_tipo_jogo'] = line[4]
+            lineout_partida['D_modalidade'] = line[5]
+            lineout_partida['E_nome'] = line[6]
+            lineout_partida['F_jogador'] = line[8]
+
+            # Resultados da partida
+            lineout_partida['G_partida_total'] = jogadas_partida
+            lineout_partida['H_partida_acertos'] = acertos_partida
+            lineout_partida['I_partida_acertos_%'] = round(((acertos_partida / jogadas_partida)*100), 2)
+            lineout_partida['J_partida_erros'] = erros_partida
+            lineout_partida['K_partida_erros_%'] = round(((erros_partida / jogadas_partida)*100), 2)
+            
+            if jogadas_partida > 0:
+                for line_set in set_resultado_global:
+                    set_resultado = {}
+                    if line_set[2] > 0:
+                        # Dados do set
+                        id_set = line_set[0]
+                        set_resultado['A_set_id'] = line_set[0]
+                        set_resultado['B_set_ordem'] = line_set[1]
+
+                        # Resultados individual do set
+                        set_resultado['C_set_total'] = line_set[2]
+                        set_resultado['E_set_acertos'] = line_set[3]
+                        set_resultado['G_set_acertos_%_relacao_set'] = round(((line_set[3] / line_set[2])*100), 2)
+                        set_resultado['H_set_erros'] = line_set[4]
+                        set_resultado['J_set_erros_%_relacao_set'] = round(((line_set[4] / line_set[2])*100), 2)
+                        
+                        # Resultados individual do set
+                        set_resultado['D_set_total_%_relacao_partida'] = round(((line_set[2] / jogadas_partida)*100), 2)
+                        set_resultado['F_set_acertos_%_relacao_partida'] = round(((line_set[3] / jogadas_partida)*100), 2)
+                        set_resultado['I_set_erros_%_relacao_partida'] = round(((line_set[4] / jogadas_partida)*100), 2)
+                        
+                        set_resultado['K_jogadas'] = []
+                        if line_set[2] > 0:
+                            for line_jogada in jogada_resultado_global:
+                                jogada = {}
+                                if id_set == line_jogada[0]:
+                                    id_golpe = line_jogada[1]
+                                    jogada['A_golpe_id'] = line_jogada[1]
+                                    jogada['B_golpe'] = line_jogada[2]
+                                    jogada['C_golpe_total'] = line_jogada[3]
+                                    jogada['D_golpe_total_%_relacao_set'] = round(((line_jogada[3] / line_set[2])*100), 2)
+
+                                    jogada['I_quadrantes_acerto'] = []
+                                    jogada['J_quadrantes_erro'] = []
+                                    if line_jogada[3] > 0:
+                                        jogadas_acerto = 0
+                                        jogadas_erro = 0
+                                        for line_quadrante in quadrante_resultado_global:
+                                            quadrante = {}
+                                            if id_golpe == line_quadrante[1] and line_jogada[0] == line_quadrante[0]:
+                                                if line_quadrante[4]:
+                                                    quadrante['A_quadrante_id'] = line_quadrante[2]
+                                                    quadrante['B_quadrante'] = line_quadrante[3]
+                                                    quadrante['C_quadrante_total'] = line_quadrante[5]
+                                                    quadrante['D_quadrante_%_relacao_golpe'] = round(((line_quadrante[5] / line_jogada[3])*100), 2)
+                                                    # jogadas_acerto = jogadas_acerto + line_quadrante[5]
+                                                    jogada['I_quadrantes_acerto'].append(quadrante)
+                                                else:
+                                                    quadrante['A_quadrante_id'] = line_quadrante[2]
+                                                    quadrante['B_quadrante'] = line_quadrante[3]
+                                                    quadrante['C_quadrante_total'] = line_quadrante[5]
+                                                    quadrante['D_quadrante_%_relacao_golpe'] = round(((line_quadrante[5] / line_jogada[3])*100), 2)
+                                                    quadrante['E_tipo_erro'] = []
+                                                    if erros_golpe_global:
+                                                            for line_erro in erros_golpe_global:
+                                                                if line_erro[5] == line_quadrante[0] and line_erro[0] == line_quadrante[1] and line_erro[1] == line_quadrante[2]:
+                                                            
+                                                                    tipo_erro = {}
+                                                                    tipo_erro['A_id'] = line_erro[6]
+                                                                    tipo_erro['B_tipo_erro'] = line_erro[3]
+                                                                    tipo_erro['C_quantidade'] = line_erro[4]
+                                                                    quadrante['E_tipo_erro'].append(tipo_erro)
+                                                                    
+                                                    jogada['J_quadrantes_erro'].append(quadrante)
+                                    jogada['E_golpe_acertos'] = line_jogada[4]
+                                    jogada['F_golpe_%_acertos'] = round(((line_jogada[4]/line_jogada[3])*100), 2)
+                                    jogada['G_golpe_erros'] = line_jogada[5]
+                                    jogada['H_golpe_%_erros'] = round(((line_jogada[5]/line_jogada[3])*100), 2)
+                                    set_resultado['K_jogadas'].append(jogada)
+
+                        lineout_partida['L_set_resultado'].append(set_resultado)
+            
+            output_partida.append(lineout_partida)
+
+
+    return jsonify({'relatorio_partida': output_partida})
 
 
 

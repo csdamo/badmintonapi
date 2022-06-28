@@ -1503,7 +1503,7 @@ def get_relatoriopartida_v1():
                             connection.close()
                     
                     tupla = (quadrante_id,)
-                    bloco = ("  select quadrante.descricao_quadrante FROM quadrante \
+                    bloco = ("  select quadrante.descricao_quadrante, quadrante.lado FROM quadrante \
                                 where quadrante.id = %s ")
 
                     try:
@@ -1524,7 +1524,10 @@ def get_relatoriopartida_v1():
                             connection.close()
                 
                     golpe = golpe[0]
-                    quadrante = quadrante[0]
+                    if quadrante[1]:
+                        quadrante = quadrante[0] + ' ' + quadrante[1]
+                    else:
+                        quadrante = quadrante[0]
 
                     jogada_tupla = (set_id, acerto_jogada, golpe_id, golpe, quadrante_id, quadrante, quantidade_jogada)    
                     jogada_resultado_global.append(jogada_tupla)
@@ -1720,10 +1723,10 @@ def get_relatoriopartida_v2():
                     tupla = (id_set, id_golpe)
 
                     # Pesquisa os quadrantes agrupados por erro e acerto 
-                    bloco = ("  SELECT jogada.quadrante_id, acerto, quadrante.descricao_quadrante, count(jogada.id), jogada.set_id \
+                    bloco = ("  SELECT jogada.quadrante_id, acerto, quadrante.descricao_quadrante, count(jogada.id), jogada.set_id, quadrante.lado \
                             FROM jogada \
                             inner join quadrante on (quadrante.id = jogada.quadrante_id)    \
-                            where set_id = %s and golpe_id = %s GROUP BY (quadrante_id, acerto, quadrante.descricao_quadrante, jogada.set_id);")
+                            where set_id = %s and golpe_id = %s GROUP BY (quadrante_id, acerto, quadrante.descricao_quadrante, jogada.set_id, quadrante.lado);")
 
                     try:
                         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
@@ -1755,9 +1758,15 @@ def get_relatoriopartida_v2():
 
                             id_quadrante = line_quadrante[0]
                             acerto_quadrante = line_quadrante[1]
-                            quadrante = line_quadrante[2]
+
+                            if line_quadrante[5]:
+                                quadrante = line_quadrante[2] + ' ' + line_quadrante[5]
+                            else:
+                                quadrante = line_quadrante[2]
+
                             quantidade_jogada_quadrante = line_quadrante[3]
                             set_id_quadrante = line_quadrante[4]
+                        
 
                             if acerto_quadrante:
                                 total_acertos_jogadas = total_acertos_jogadas + quantidade_jogada_quadrante
@@ -1984,10 +1993,10 @@ def get_relatoriopartida_v3():
                     tupla = (id_set, id_golpe)
 
                     # Pesquisa os quadrantes agrupados por erro e acerto 
-                    bloco = ("  SELECT jogada.quadrante_id, acerto, quadrante.descricao_quadrante, count(jogada.id), jogada.set_id \
+                    bloco = ("  SELECT jogada.quadrante_id, acerto, quadrante.descricao_quadrante, count(jogada.id), jogada.set_id, quadrante.lado \
                             FROM jogada \
                             inner join quadrante on (quadrante.id = jogada.quadrante_id)    \
-                            where set_id = %s and golpe_id = %s GROUP BY (quadrante_id, acerto, quadrante.descricao_quadrante, jogada.set_id);")
+                            where set_id = %s and golpe_id = %s GROUP BY (quadrante_id, acerto, quadrante.descricao_quadrante, jogada.set_id, quadrante.lado);")
 
                     try:
                         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
@@ -2011,9 +2020,14 @@ def get_relatoriopartida_v3():
 
                             id_quadrante = line_quadrante[0]
                             acerto_quadrante = line_quadrante[1]
-                            quadrante = line_quadrante[2]
+                            if line_quadrante[5]:
+                                quadrante = line_quadrante[2] + ' ' + line_quadrante[5]
+                            else:
+                                quadrante = line_quadrante[2]
+                            
                             quantidade_jogada_quadrante = line_quadrante[3]
                             set_id_quadrante = line_quadrante[4]
+                           
 
                             if acerto_quadrante:
                                 total_acertos_jogadas = total_acertos_jogadas + quantidade_jogada_quadrante

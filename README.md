@@ -57,10 +57,7 @@ Este projeto foi desenvolvido na disciplina de Laboratório de Software, do curs
 ## Como usar
 
 
-&nbsp;
-
-
-### Projeto backend:
+### :waxing_crescent_moon: Projeto backend:
 #### Requisitos:
 * Instalação do PostgreSQL (a partir da versão 13.3)
 > https://www.postgresql.org/
@@ -141,7 +138,7 @@ pip install -r requirements.txt
 &nbsp;
 
 
-### Projeto frontend:
+### :waxing_gibbous_moon: Projeto frontend:
 
 #### Requisitos:
 

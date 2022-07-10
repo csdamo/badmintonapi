@@ -4,7 +4,7 @@
 ![Badge em Desenvolvimento](http://img.shields.io/static/v1?label=status&message=em%20desenvolvimento&color=GREEN&style=flat)
 
 
-
+&nbsp;
 
 
 ## Índice 
@@ -13,15 +13,21 @@
 * [Funcionalidades do projeto](#Funcionalidades-do-projeto)
 * [Principais tecnologias utilizadas](#Principais-tecnologias-utilizadas)
 * [Como usar](#Como-usar)
-* [Projeto backend](#Projeto-backend)
-* [Projeto front end](#Projeto-frontend)
+  * [Projeto backend](#Projeto-backend)
+  * [Projeto front end](#Projeto-frontend)
 * [Demonstração](#Demonstração)
 * [Time de desenvolvedoras](Time-de-desenvolvedoras)
+
+
+&nbsp;
 
 
 ## Sobre o projeto
 
 Este projeto foi desenvolvido na disciplina de Laboratório de Software, do curso de Análise e Desenvolvimento de Sistemas da UCS, no primeiro semestre de 2022, tendo como escopo a criação de uma ferramenta de scout para avaliar jogadores de badminton.
+
+
+&nbsp;
 
 
 ## :hammer: Funcionalidades do projeto
@@ -30,6 +36,9 @@ Este projeto foi desenvolvido na disciplina de Laboratório de Software, do curs
 - `Funcionalidade 2`: cadastrar e listar partida
 - `Funcionalidade 3`: iniciar partida e gravar jogadas
 - `Funcionalidade 4`: exibir relatório de desempenho do jogador na partida
+
+
+&nbsp;
 
 
 ## Principais tecnologias utilizadas
@@ -41,7 +50,15 @@ Este projeto foi desenvolvido na disciplina de Laboratório de Software, do curs
 ![nodejs_logo](https://user-images.githubusercontent.com/64370426/178148545-ee01eed4-0093-4566-8a79-8e57f78904cc.png)
 ![Angular_ svg](https://user-images.githubusercontent.com/64370426/178146928-20b84988-d027-44ac-bb81-a316ae3d9708.png)
 
+
+&nbsp;
+
+
 ## Como usar
+
+
+&nbsp;
+
 
 ### Projeto backend:
 #### Requisitos:
@@ -121,10 +138,15 @@ pip install -r requirements.txt
 * No prompt de comando, com o ambiente virtual ativado, executar o arquivo **apibadminton.py** para subir o servidor
 
 
+&nbsp;
+
 
 ### Projeto frontend:
+
 #### Requisitos:
+
 ##### Para iniciar o projeto na máquina local, será necessário fazer a instalação do node, npm e angular, nas seguintes versões e links:
+
 > Node versão 14.17.3 https://nodejs.org/en/blog/release/v14.17.3/
 
 > npm versão 8.5.0 https://www.npmjs.com/package/npm/v/8.5.0
@@ -134,13 +156,19 @@ pip install -r requirements.txt
 #### Instruções completas no repositório:
 > https://github.com/clhobus013/scout-badminton
 
+
+&nbsp;
+
+
 ## Demonstração
 
 https://user-images.githubusercontent.com/64370426/178149399-72120908-864c-4469-bce2-a4cb7dd7538c.mp4
 
 
+&nbsp;
 
-## Time de desenvolvedoras
+
+## 👩‍💻 Time de desenvolvedoras
 
 Claudia Hobus - 
 Cristiane Sebem Damo - 

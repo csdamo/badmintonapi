@@ -63,7 +63,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/get_jogadores?lista_id_jogador=",
+					"raw": "{{url}}/get_jogadores?lista_id_jogador=3, 2",
 					"host": [
 						"{{url}}"
 					],
@@ -73,7 +73,7 @@
 					"query": [
 						{
 							"key": "lista_id_jogador",
-							"value": ""
+							"value": "3, 2"
 						}
 					]
 				},
@@ -142,7 +142,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"nome\": \"teste V\",\r\n    \"data\": \"2022-05-30\",\r\n    \"tipo_jogo\": \"simples\",\r\n    \"modalidade\": \"misto\",\r\n    \"jogador_1\": 10,\r\n    \"jogador_adversario_1\": 22\r\n}",
+					"raw": "{\r\n    \"nome\": \"Partida Relatorio\",\r\n    \"data\": \"2022-05-30\",\r\n    \"tipo_jogo\": \"simples\",\r\n    \"modalidade\": \"misto\",\r\n    \"jogador_1\": 3,\r\n    \"jogador_adversario_1\": 2\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -168,7 +168,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/get_partida?id_partida=5",
+					"raw": "{{url}}/get_partida?id_partida=78",
 					"host": [
 						"{{url}}"
 					],
@@ -178,7 +178,7 @@
 					"query": [
 						{
 							"key": "id_partida",
-							"value": "5"
+							"value": "78"
 						}
 					]
 				},
@@ -216,7 +216,7 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/post_set?id_partida=17&ordem_set=2",
+					"raw": "{{url}}/post_set?id_partida=23&ordem_set=3",
 					"host": [
 						"{{url}}"
 					],
@@ -226,11 +226,11 @@
 					"query": [
 						{
 							"key": "id_partida",
-							"value": "17"
+							"value": "23"
 						},
 						{
 							"key": "ordem_set",
-							"value": "2"
+							"value": "3"
 						}
 					]
 				},
@@ -269,7 +269,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"set\": 96,\r\n    \"golpe\": 4,\r\n    \"quadrante\": 1,\r\n    \"tipoerro\": 0,\r\n    \"acerto\": true\r\n}",
+					"raw": "{\r\n    \"set\": 137,\r\n    \"golpe\": 1,\r\n    \"quadrante\": 13,\r\n    \"tipoerro\": 3,\r\n    \"acerto\": false\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -320,7 +320,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/v2/get_relatoriopartida?id_partida=23",
+					"raw": "{{url}}/v2/get_relatoriopartida?id_partida=63",
 					"host": [
 						"{{url}}"
 					],
@@ -331,7 +331,7 @@
 					"query": [
 						{
 							"key": "id_partida",
-							"value": "23"
+							"value": "63"
 						}
 					]
 				},
@@ -345,7 +345,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/v3/get_relatoriopartida?id_partida=23",
+					"raw": "{{url}}/v3/get_relatoriopartida?id_partida=63",
 					"host": [
 						"{{url}}"
 					],
@@ -356,42 +356,11 @@
 					"query": [
 						{
 							"key": "id_partida",
-							"value": "23"
+							"value": "63"
 						}
 					]
 				},
 				"description": "/v3/get_relatoriopartida\n\n**Entrada**:\n\n*   id_partida: int\n    \n\n**Saída**: {\n\n``` json\n   {\n    \"relatorio_partida\": [\n        {\n            \"A_partida_id\": 23,\n            \"B_data\": \"30-05-2022\",\n            \"C_tipo_jogo\": \"simples\",\n            \"D_modalidade\": \"misto\",\n            \"E_nome\": \"Partida Relatorio\",\n            \"F_jogador\": \"Fabiana da Silva\",\n            \"G_partida_total\": 42,\n            \"H_partida_acertos\": 18,\n            \"I_partida_acertos_%\": 42.86,\n            \"J_partida_erros\": 24,\n            \"K_partida_erros_%\": 57.14,\n            \"L_set_resultado\": [\n                {\n                    \"A_set_id\": 7,\n                    \"B_set_ordem\": 1,\n                    \"C_set_total\": 22,\n                    \"D_set_total_%_relacao_partida\": 52.38,\n                    \"E_set_acertos\": 11,\n                    \"F_set_acertos_%_relacao_partida\": 26.19,\n                    \"G_set_acertos_%_relacao_set\": 50.0,\n                    \"H_set_erros\": 11,\n                    \"I_set_erros_%_relacao_partida\": 26.19,\n                    \"J_set_erros_%_relacao_set\": 50.0,\n                    \"K_jogadas\": [\n                        {\n                            \"A_golpe_id\": 1,\n                            \"B_golpe\": \"Saque\",\n                            \"C_golpe_total\": 5,\n                            \"D_golpe_total_%_relacao_set\": 22.73,\n                            \"E_golpe_acertos\": 3,\n                            \"F_golpe_%_acertos\": 60.0,\n                            \"G_golpe_erros\": 2,\n                            \"H_golpe_%_erros\": 40.0,\n                            \"I_quadrantes_acerto\": [\n                                {\n                                    \"A_quadrante_id\": 1,\n                                    \"B_quadrante\": \"Q 01\",\n                                    \"C_quadrante_total\": 3,\n                                    \"D_quadrante_%_relacao_golpe\": 60.0\n                                }\n                            ],\n                            \"J_quadrantes_erro\": [\n                                {\n                                    \"A_quadrante_id\": 1,\n                                    \"B_quadrante\": \"Q 01\",\n                                    \"C_quadrante_total\": 2,\n                                    \"D_quadrante_%_relacao_golpe\": 40.0,\n                                    \"E_tipo_erro\": []\n                                }\n                            ]\n                        },\n                        {\n                            \"A_golpe_id\": 3,\n                            \"B_golpe\": \"Backhand\",\n                            \"C_golpe_total\": 9,\n                            \"D_golpe_total_%_relacao_set\": 40.91,\n                            \"E_golpe_acertos\": 3,\n                            \"F_golpe_%_acertos\": 33.33,\n                            \"G_golpe_erros\": 6,\n                            \"H_golpe_%_erros\": 66.67,\n                            \"I_quadrantes_acerto\": [\n                                {\n                                    \"A_quadrante_id\": 2,\n                                    \"B_quadrante\": \"Q 02\",\n                                    \"C_quadrante_total\": 1,\n                                    \"D_quadrante_%_relacao_golpe\": 11.11\n                                },\n                                {\n                                    \"A_quadrante_id\": 5,\n                                    \"B_quadrante\": \"Q 05\",\n                                    \"C_quadrante_total\": 2,\n                                    \"D_quadrante_%_relacao_golpe\": 22.22\n                                }\n                            ],\n                            \"J_quadrantes_erro\": [\n                                {\n                                    \"A_quadrante_id\": 2,\n                                    \"B_quadrante\": \"Q 02\",\n                                    \"C_quadrante_total\": 4,\n                                    \"D_quadrante_%_relacao_golpe\": 44.44,\n                                    \"E_tipo_erro\": []\n                                },\n                                {\n                                    \"A_quadrante_id\": 5,\n                                    \"B_quadrante\": \"Q 05\",\n                                    \"C_quadrante_total\": 2,\n                                    \"D_quadrante_%_relacao_golpe\": 22.22,\n                                    \"E_tipo_erro\": []\n                                }\n                            ]\n                        },\n                        {\n                            \"A_golpe_id\": 7,\n                            \"B_golpe\": \"Drive\",\n                            \"C_golpe_total\": 8,\n                            \"D_golpe_total_%_relacao_set\": 36.36,\n                            \"E_golpe_acertos\": 5,\n                            \"F_golpe_%_acertos\": 62.5,\n                            \"G_golpe_erros\": 3,\n                            \"H_golpe_%_erros\": 37.5,\n                            \"I_quadrantes_acerto\": [\n                                {\n                                    \"A_quadrante_id\": 2,\n                                    \"B_quadrante\": \"Q 02\",\n                                    \"C_quadrante_total\": 5,\n                                    \"D_quadrante_%_relacao_golpe\": 62.5\n                                }\n                            ],\n                            \"J_quadrantes_erro\": [\n                                {\n                                    \"A_quadrante_id\": 2,\n                                    \"B_quadrante\": \"Q 02\",\n                                    \"C_quadrante_total\": 3,\n                                    \"D_quadrante_%_relacao_golpe\": 37.5,\n                                    \"E_tipo_erro\": []\n                                }\n                            ]\n                        }\n                    ]\n                },\n                {\n                    \"A_set_id\": 8,\n                    \"B_set_ordem\": 2,\n                    \"C_set_total\": 8,\n                    \"D_set_total_%_relacao_partida\": 19.05,\n                    \"E_set_acertos\": 3,\n                    \"F_set_acertos_%_relacao_partida\": 7.14,\n                    \"G_set_acertos_%_relacao_set\": 37.5,\n                    \"H_set_erros\": 5,\n                    \"I_set_erros_%_relacao_partida\": 11.9,\n                    \"J_set_erros_%_relacao_set\": 62.5,\n                    \"K_jogadas\": [\n                        {\n                            \"A_golpe_id\": 1,\n                            \"B_golpe\": \"Saque\",\n                            \"C_golpe_total\": 6,\n                            \"D_golpe_total_%_relacao_set\": 75.0,\n                            \"E_golpe_acertos\": 3,\n                            \"F_golpe_%_acertos\": 50.0,\n                            \"G_golpe_erros\": 3,\n                            \"H_golpe_%_erros\": 50.0,\n                            \"I_quadrantes_acerto\": [\n                                {\n                                    \"A_quadrante_id\": 1,\n                                    \"B_quadrante\": \"Q 01\",\n                                    \"C_quadrante_total\": 2,\n                                    \"D_quadrante_%_relacao_golpe\": 33.33\n                                },\n                                {\n                                    \"A_quadrante_id\": 2,\n                                    \"B_quadrante\": \"Q 02\",\n                                    \"C_quadrante_total\": 1,\n                                    \"D_quadrante_%_relacao_golpe\": 16.67\n                                }\n                            ],\n                            \"J_quadrantes_erro\": [\n                                {\n                                    \"A_quadrante_id\": 2,\n                                    \"B_quadrante\": \"Q 02\",\n                                    \"C_quadrante_total\": 3,\n                                    \"D_quadrante_%_relacao_golpe\": 50.0,\n                                    \"E_tipo_erro\": []\n                                }\n                            ]\n                        },\n                        {\n                            \"A_golpe_id\": 3,\n                            \"B_golpe\": \"Backhand\",\n                            \"C_golpe_total\": 2,\n                            \"D_golpe_total_%_relacao_set\": 25.0,\n                            \"E_golpe_acertos\": 0,\n                            \"F_golpe_%_acertos\": 0.0,\n                            \"G_golpe_erros\": 2,\n                            \"H_golpe_%_erros\": 100.0,\n                            \"I_quadrantes_acerto\": [],\n                            \"J_quadrantes_erro\": [\n                                {\n                                    \"A_quadrante_id\": 6,\n                                    \"B_quadrante\": \"Q 06\",\n                                    \"C_quadrante_total\": 2,\n                                    \"D_quadrante_%_relacao_golpe\": 100.0,\n                                    \"E_tipo_erro\": []\n                                }\n                            ]\n                        }\n                    ]\n                },\n                {\n                    \"A_set_id\": 9,\n                    \"B_set_ordem\": 3,\n                    \"C_set_total\": 12,\n                    \"D_set_total_%_relacao_partida\": 28.57,\n                    \"E_set_acertos\": 4,\n                    \"F_set_acertos_%_relacao_partida\": 9.52,\n                    \"G_set_acertos_%_relacao_set\": 33.33,\n                    \"H_set_erros\": 8,\n                    \"I_set_erros_%_relacao_partida\": 19.05,\n                    \"J_set_erros_%_relacao_set\": 66.67,\n                    \"K_jogadas\": [\n                        {\n                            \"A_golpe_id\": 1,\n                            \"B_golpe\": \"Saque\",\n                            \"C_golpe_total\": 5,\n                            \"D_golpe_total_%_relacao_set\": 41.67,\n                            \"E_golpe_acertos\": 2,\n                            \"F_golpe_%_acertos\": 40.0,\n                            \"G_golpe_erros\": 3,\n                            \"H_golpe_%_erros\": 60.0,\n                            \"I_quadrantes_acerto\": [\n                                {\n                                    \"A_quadrante_id\": 3,\n                                    \"B_quadrante\": \"Q 03\",\n                                    \"C_quadrante_total\": 2,\n                                    \"D_quadrante_%_relacao_golpe\": 40.0\n                                }\n                            ],\n                            \"J_quadrantes_erro\": [\n                                {\n                                    \"A_quadrante_id\": 1,\n                                    \"B_quadrante\": \"Q 01\",\n                                    \"C_quadrante_total\": 2,\n                                    \"D_quadrante_%_relacao_golpe\": 40.0,\n                                    \"E_tipo_erro\": [\n                                        {\n                                            \"A_id\": 3,\n                                            \"B_tipo_erro\": \"Fora da zona de saque\",\n                                            \"C_quantidade\": 2\n                                        }\n                                    ]\n                                },\n                                {\n                                    \"A_quadrante_id\": 6,\n                                    \"B_quadrante\": \"Q 06\",\n                                    \"C_quadrante_total\": 1,\n                                    \"D_quadrante_%_relacao_golpe\": 20.0,\n                                    \"E_tipo_erro\": [\n                                        {\n                                            \"A_id\": 1,\n                                            \"B_tipo_erro\": \"Fora da Quadra\",\n                                            \"C_quantidade\": 1\n                                        }\n                                    ]\n                                }\n                            ]\n                        },\n                        {\n                            \"A_golpe_id\": 3,\n                            \"B_golpe\": \"Backhand\",\n                            \"C_golpe_total\": 4,\n                            \"D_golpe_total_%_relacao_set\": 33.33,\n                            \"E_golpe_acertos\": 1,\n                            \"F_golpe_%_acertos\": 25.0,\n                            \"G_golpe_erros\": 3,\n                            \"H_golpe_%_erros\": 75.0,\n                            \"I_quadrantes_acerto\": [\n                                {\n                                    \"A_quadrante_id\": 6,\n                                    \"B_quadrante\": \"Q 06\",\n                                    \"C_quadrante_total\": 1,\n                                    \"D_quadrante_%_relacao_golpe\": 25.0\n                                }\n                            ],\n                            \"J_quadrantes_erro\": [\n                                {\n                                    \"A_quadrante_id\": 6,\n                                    \"B_quadrante\": \"Q 06\",\n                                    \"C_quadrante_total\": 3,\n                                    \"D_quadrante_%_relacao_golpe\": 75.0,\n                                    \"E_tipo_erro\": []\n                                }\n                            ]\n                        },\n                        {\n                            \"A_golpe_id\": 5,\n                            \"B_golpe\": \"Drop\",\n                            \"C_golpe_total\": 3,\n                            \"D_golpe_total_%_relacao_set\": 25.0,\n                            \"E_golpe_acertos\": 1,\n                            \"F_golpe_%_acertos\": 33.33,\n                            \"G_golpe_erros\": 2,\n                            \"H_golpe_%_erros\": 66.67,\n                            \"I_quadrantes_acerto\": [\n                                {\n                                    \"A_quadrante_id\": 6,\n                                    \"B_quadrante\": \"Q 06\",\n                                    \"C_quadrante_total\": 1,\n                                    \"D_quadrante_%_relacao_golpe\": 33.33\n                                }\n                            ],\n                            \"J_quadrantes_erro\": [\n                                {\n                                    \"A_quadrante_id\": 6,\n                                    \"B_quadrante\": \"Q 06\",\n                                    \"C_quadrante_total\": 2,\n                                    \"D_quadrante_%_relacao_golpe\": 66.67,\n                                    \"E_tipo_erro\": []\n                                }\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}\n\n```"
-			},
-			"response": []
-		},
-		{
-			"name": "/upload_file",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "file",
-							"type": "file",
-							"src": "/C:/Users/crist/Desktop/carolinaMartin.jpg"
-						}
-					]
-				},
-				"url": {
-					"raw": "https://scoutbadmintonapi.herokuapp.com/upload_file",
-					"protocol": "https",
-					"host": [
-						"scoutbadmintonapi",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"upload_file"
-					]
-				},
-				"description": "**/upload**\n\nEntrada:\n\n*   não requer parâmetros\n    \n\nSaída:\n\n*   nome do arquivo\n    \n\n``` json\n{\n    \"mensagem\": {\n        \"nome_arquivo\": \"PusarlaVenkataSindhu.jpg\"\n    }\n}\n\n```"
 			},
 			"response": []
 		}

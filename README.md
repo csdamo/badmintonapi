@@ -54,7 +54,7 @@ Este projeto foi desenvolvido na disciplina de Laboratório de Software, do curs
 &nbsp;
 
 
-## Como usar
+## 🛠️ Como usar
 
 
 ### :waxing_crescent_moon: Projeto backend:

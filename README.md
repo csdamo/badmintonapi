@@ -15,6 +15,7 @@
 * [Como usar](#Como-usar)
 * [Projeto backend](#Projeto-backend)
 * [Projeto front end](#Projeto-frontend)
+* [Demonstração](#Demonstração)
 * [Time de desenvolvedoras](Time-de-desenvolvedoras)
 
 
@@ -134,9 +135,6 @@ pip install -r requirements.txt
 > https://github.com/clhobus013/scout-badminton
 
 ## Demonstração
-
-
-
 
 https://user-images.githubusercontent.com/64370426/178149399-72120908-864c-4469-bce2-a4cb7dd7538c.mp4
 

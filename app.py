@@ -238,7 +238,7 @@ def get_jogadores():
                 blocof = blocof + " or jogador.id = %s "
                 tupla = (tupla) + (jogador_id,)
     
-    bloco = blocoi + blocof
+    bloco = blocoi + blocof + " order by jogador.nome_jogador "
     
     try:
         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])
@@ -908,7 +908,7 @@ def get_partidas():
                 blocof = blocof + " or partida.id = %s "
                 tupla = (tupla) + (partida_id, )
     
-    bloco = blocoi + blocof
+    bloco = blocoi + blocof + " order by partida.data_partida desc "
 
     try:
         connection = psycopg2.connect(host=config['DATABASE_HOST'], database=config['DATABASE_NAME'], user=config['DATABASE_USER'], password=config['DATABASE_PASSWORD'])

@@ -21,6 +21,7 @@
 
 &nbsp;
 
+![image](https://user-images.githubusercontent.com/64370426/220476327-22075f92-4127-48d2-9c0d-a256fead9a3e.png#vitrinedev)
 
 ## Sobre o projeto
 

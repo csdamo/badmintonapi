@@ -6,6 +6,10 @@
 
 &nbsp;
 
+| :placard: Vitrine.Dev |     |
+| -------------  | --- |
+| :sparkles: Nome        | **badminton**
+| :label: Tecnologias | python, flask
 
 ## Índice 
 
